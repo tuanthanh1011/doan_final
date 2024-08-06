@@ -67,7 +67,7 @@ import { ConversationsModule } from './modules/conversations/conversations.modul
     }),
 
     ConfigModule.forRoot({
-      envFilePath: '.env.example',
+      envFilePath: '.env',
     }),
 
     CategoryModule,
