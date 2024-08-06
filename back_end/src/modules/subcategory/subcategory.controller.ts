@@ -20,8 +20,8 @@ import { FindSubcategoryDto } from './dto/list-subcategory.dto';
 export class SubcategoryController {
   constructor(private readonly subcategoryService: SubcategoryService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Roles('ADMIN')
+  // @UseGuards(JwtAuthGuard)
+  // @Roles('ADMIN')
   @Post()
   create(@Body() createSubcategoryDto: CreateSubcategoryDto) {
     return this.subcategoryService.create(createSubcategoryDto);
