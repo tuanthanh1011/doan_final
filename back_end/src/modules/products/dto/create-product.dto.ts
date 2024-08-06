@@ -13,7 +13,15 @@ export class CreateProductDto {
   @IsNotEmpty()
   image: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  price: number;
+  @IsString()
+  @IsOptional()
+  trademark: string;
+  
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @IsString()
+  @IsOptional()
+  detailName: string;
 }

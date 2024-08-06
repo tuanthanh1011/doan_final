@@ -23,12 +23,13 @@ export class ProductsService {
     private readonly minioClientService: MinioClientService,
   ) {}
   async create(createProductDto: CreateProductDto) {
-    const { subcategory, image, productName, price } = createProductDto;
+    const { subcategory, image, productName, description, trademark } = createProductDto;
     const subcategoryFind = await this.subcategoryService.findOne(subcategory);
     const create = this.productsRepository.create({
       image,
       productName,
-      price,
+      description,
+      trademark,
       subcategory: subcategoryFind,
     });
     return this.productsRepository.save(create);
@@ -270,8 +271,6 @@ export class ProductsService {
     product.productName = productName;
 
     product.isActive = isActive;
-
-    product.price = price;
 
     await this.productsRepository.save(product);
 

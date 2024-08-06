@@ -27,13 +27,23 @@ export class Products {
   @Column()
   image: string;
 
-  @ManyToOne((type) => Subcategory, (subcategory) => subcategory.products)
-  subcategory: Subcategory;
+  @Column({
+    default: ""
+  })
+  trademark: string;
 
   @Column({
-    default: 0,
+    default: ""
   })
-  price: number;
+  description: string;
+  
+  @Column({
+    default: ""
+  })
+  detailName: string;
+
+  @ManyToOne((type) => Subcategory, (subcategory) => subcategory.products)
+  subcategory: Subcategory;
 
   @Column({
     default: 0,
@@ -50,8 +60,8 @@ export class Products {
   })
   isActive: boolean;
 
-  // @OneToMany((type) => DetailProduct, (detailProduct) => detailProduct.product)
-  // detailProducts: DetailProduct[];
+  @OneToMany((type) => DetailProduct, (detailProduct) => detailProduct.product)
+  detailProducts: DetailProduct[];
 
   @OneToMany((type) => Cart, (cart) => cart.product)
   cart: Cart[];

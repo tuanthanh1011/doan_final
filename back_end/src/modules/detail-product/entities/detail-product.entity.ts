@@ -16,19 +16,21 @@ export class DetailProduct {
   id: string;
 
   @Column()
-  price: string;
+  price: number;
 
   @Column({
-    default: '',
+    default: ""
   })
-  description: string;
+  content: string;
+
+  @Column({
+    default: 0
+  })
+  quantity: number;
 
   @Column()
-  image: string;
-
-  // @Column()
-  // @ManyToOne((type) => Products, (products) => products.detailProducts)
-  // product: string;
+  @ManyToOne((type) => Products, (products) => products.detailProducts)
+  product: string;
 
   @CreateDateColumn()
   createdAt: Date;
