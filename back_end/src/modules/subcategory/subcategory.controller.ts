@@ -29,7 +29,6 @@ export class SubcategoryController {
 
   @Get()
   findAll(@Query() findSubcategoryDto: FindSubcategoryDto) {
-    console.log(findSubcategoryDto);
     return this.subcategoryService.findAll(findSubcategoryDto);
   }
 

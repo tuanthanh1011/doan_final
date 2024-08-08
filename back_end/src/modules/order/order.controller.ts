@@ -47,7 +47,6 @@ export class OrderController {
   @Roles('EMPLOYEE')
   @Get()
   findAll(@Query() query: FindOrderDto) {
-    console.log(query);
     return this.orderService.findAll(query);
   }
 

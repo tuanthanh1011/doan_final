@@ -101,7 +101,6 @@ export class OrderService {
       sortBy = 'createdAt',
       sortOrder = 'DESC',
     } = queryData;
-    console.log(search);
     const query = this.ordersRepository
       .createQueryBuilder('order')
       .innerJoinAndSelect('order.user', 'user');
@@ -255,13 +254,10 @@ export class OrderService {
   }
 
   async handleCancelOrder(orderId: string, userId: string) {
-    console.log(userId, orderId);
     const query = this.ordersRepository
       .createQueryBuilder('order')
       .where('order.id = :orderId', { orderId });
     const item = await query.getOne();
-
-    console.log(item);
 
     if (item.status == 'Chờ xác nhận') {
       item.status = 'Đã hủy';
@@ -277,13 +273,10 @@ export class OrderService {
   }
 
   async handleCancelOrder1(orderId: string, userId: string) {
-    console.log(userId, orderId);
     const query = this.ordersRepository
       .createQueryBuilder('order')
       .where('order.id = :orderId', { orderId });
     const item = await query.getOne();
-
-    console.log(item);
 
     if (item.status == 'Chờ xác nhận') {
       item.status = 'Đã hủy';
@@ -299,13 +292,10 @@ export class OrderService {
   }
 
   async handleCancelOrder2(orderId: string, userId: string) {
-    console.log(userId, orderId);
     const query = this.ordersRepository
       .createQueryBuilder('order')
       .where('order.id = :orderId', { orderId });
     const item = await query.getOne();
-
-    console.log(item);
 
     if (item.status == 'Chờ xác nhận') {
       item.status = 'Đã hủy';

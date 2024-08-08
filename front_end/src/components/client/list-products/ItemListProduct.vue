@@ -93,7 +93,6 @@ export default {
     });
 
     const processedPrice = computed(() => {
-      console.log(product.value.price);
       return formatNumberWithDots(product.value.price);
     });
 

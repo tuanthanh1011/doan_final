@@ -88,7 +88,6 @@ export class ConversationsService {
       .andWhere('conversation.staffId IS NULL')
       .getOne();
 
-    console.log(findConversation);
     if (!findConversation) {
       throw new BadRequestException('Phiên liên hệ đã được xử lý');
     }

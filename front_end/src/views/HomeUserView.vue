@@ -1,5 +1,6 @@
 <template>
-  <the-slide-bar></the-slide-bar>
+ <div>
+   <the-slide-bar></the-slide-bar>
 
   <!-- Banner -->
   <the-banner></the-banner>
@@ -35,6 +36,7 @@
       <i class="zmdi zmdi-chevron-up"></i>
     </span>
   </div>
+ </div>
 </template>
 
 <script>
@@ -76,8 +78,6 @@ export default {
 
         const result = await getAllProduct();
 
-        console.log(result);
-
         const listProductProcessed = result.rows.map((product) => {
           return {
             ...product,
@@ -98,9 +98,6 @@ export default {
           }),
           8
         );
-
-        console.log(listProduct_nuong.value);
-        console.log(listProduct_lau.value);
 
         listProduct.value = listProductProcessed;
       } catch (err) {

@@ -6,7 +6,6 @@ export const createACart = async (data) => {
 
 export const updateACart = async (data) => {
   const { cartId, quantity } = data;
-  console.log(cartId, quantity)
   return await axiosAPI.patch(`/cart/${cartId}`, { quantity });
 };
 

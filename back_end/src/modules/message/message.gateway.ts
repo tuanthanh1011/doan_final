@@ -272,7 +272,6 @@ export class MessageGateway
     const messages =
       await this.messageService.findAllByConversation(conversation);
 
-    console.log(messages);
     return {
       messages,
     };

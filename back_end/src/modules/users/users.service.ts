@@ -63,12 +63,8 @@ export class UsersService {
   async post(registerUserAdminDto: RegisterUserAdminDto) {
     const { email, password, username, role } = registerUserAdminDto;
 
-    console.log(email);
-
     // Check if user already exists
     const user = await this.findUserByEmailNotOauth(email);
-
-    console.log(user);
 
     if (user) {
       throw new BadRequestException(`Email đã tồn tại trong hệ thống`);
