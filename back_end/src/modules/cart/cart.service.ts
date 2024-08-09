@@ -77,6 +77,7 @@ export class CartService {
       .createQueryBuilder('cart')
       .innerJoinAndSelect('cart.user', 'user')
       .innerJoinAndSelect('cart.detailProduct', 'detail-product')
+      .innerJoinAndSelect('detail-product.product', 'products')
       .where('user.id = :id', { id });
 
     const [items, total] = await query.getManyAndCount();
