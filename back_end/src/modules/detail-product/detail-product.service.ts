@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDetailProductDto } from './dto/create-detail-product.dto';
 import { UpdateDetailProductDto } from './dto/update-detail-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,6 +23,17 @@ export class DetailProductService {
 
     return await this.detailProductRepository.save(create);
   }
+
+  async findDetailProductById(id: string) {
+    const product = await this.detailProductRepository.findOneBy({ id });
+
+    if (!product) {
+      throw new NotFoundException('Không tìm thấy sản phẩm tương ứng');
+    }
+
+    return product;
+  }
+
 
   // findAll() {
   //   return `This action returns all detailProduct`;

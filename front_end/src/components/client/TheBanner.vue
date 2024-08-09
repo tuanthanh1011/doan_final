@@ -6,7 +6,7 @@
           <!-- Block1 -->
           <div class="block1 wrap-pic-w">
             <img
-              src="http://localhost:9000/banner/banner1.png"
+              :src="`${config.MINIO_URL}banners/a5-e1671443988522.jpg`"
               alt="IMG-BANNER"
             />
 
@@ -15,11 +15,11 @@
             >
               <div class="block1-txt-child1 flex-col-l">
                 <span class="block1-name ltext-102 trans-04 p-b-8">
-                  Tươi ngon sạch sẽ
+                  BỘ SƯU TẬP MỚI
                 </span>
 
                 <span class="block1-info stext-102 trans-04">
-                  Ngon, sạch, tiện lợi và tiết kiệm
+                  Cùng chờ đón các bộ sản phẩm mới và hấp dẫn!
                 </span>
               </div>
 
@@ -36,7 +36,7 @@
           <!-- Block1 -->
           <div class="block1 wrap-pic-w">
             <img
-              src="http://localhost:9000/banner/banner3.png"
+              :src="`${config.MINIO_URL}banners/banner-ageloc-boost-myphamnuskin.jpg`"
               alt="IMG-BANNER"
               style="height: 220px; background-color: rgba(0, 0, 0, 0.7)"
             />
@@ -46,11 +46,11 @@
             >
               <div class="block1-txt-child1 flex-col-l">
                 <span class="block1-name ltext-102 trans-04 p-b-8">
-                  Đa dạng sản phẩm
+                  ĐÓN CHÀO HÈ VỚI ƯU ĐÃI KHỦNG
                 </span>
 
                 <span class="block1-info stext-102 trans-04">
-                  Nhiều set lẩu và nướng để khách hàng lựa chọn
+                  Đặt hàng ngay để nhận ưu đãi hấp dẫn
                 </span>
               </div>
 
@@ -67,7 +67,7 @@
           <!-- Block1 -->
           <div class="block1 wrap-pic-w">
             <img
-              src="http://localhost:9000/banner/banner2.png"
+             :src="`${config.MINIO_URL}banners/images (1).jpg`"
               alt="IMG-BANNER"
             />
 
@@ -76,7 +76,7 @@
             >
               <div class="block1-txt-child1 flex-col-l">
                 <span class="block1-name ltext-102 trans-04 p-b-8">
-                  Giao hàng tận nơi
+                  GIAO HÀNG TẬN NƠI
                 </span>
 
                 <span class="block1-info stext-102 trans-04">
@@ -98,7 +98,15 @@
 </template>
 
 <script>
-export default {};
+import config from "@/configs/config";
+
+export default {
+  setup() {
+    return {
+      config
+    };
+  }
+};
 </script>
 
 <style scoped>

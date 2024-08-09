@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from './entities/cart.entity';
 import { Repository } from 'typeorm';
 import { ProductsService } from '../products/products.service';
+import { DetailProductService } from '../detail-product/detail-product.service';
 
 @Injectable()
 export class CartService {
@@ -12,14 +13,15 @@ export class CartService {
     @InjectRepository(Cart)
     private cartsRepository: Repository<Cart>,
     private readonly productsService: ProductsService,
+    private readonly detailProductService: DetailProductService
   ) {}
   async create(createCartDto: CreateCartDto, id: string) {
     try {
-      const { product, quantity } = createCartDto;
-      await this.productsService.findProductById(product);
-      const resultFindCart: any = await this.checkProductExistsCart(
+      const { detailProduct, quantity } = createCartDto;
+      await this.detailProductService.findDetailProductById(detailProduct);
+      const resultFindCart: any = await this.checkDetailProductExistsCart(
         id,
-        product,
+        detailProduct,
       );
       if (resultFindCart) {
         resultFindCart.quantity += quantity;
@@ -28,7 +30,7 @@ export class CartService {
       const create: Cart = this.cartsRepository.create({
         user: id,
         quantity,
-        product,
+        detailProduct,
       });
       return this.cartsRepository.save(create);
     } catch (err) {
@@ -36,8 +38,8 @@ export class CartService {
     }
   }
 
-  async deleteProductOfCart(userId: string, productId: string) {
-    const resultFindCart = await this.checkProductExistsCart(userId, productId);
+  async deleteProductOfCart(userId: string, detailProductId: string) {
+    const resultFindCart = await this.checkDetailProductExistsCart(userId, detailProductId);
 
     if (!resultFindCart) {
       throw new NotFoundException('Không tìm thấy sản phẩm phù hợp');
@@ -47,15 +49,15 @@ export class CartService {
       .createQueryBuilder('cart')
       .delete()
       .where('cart.user = :id', { id: userId })
-      .andWhere('cart.product = :product', { product: productId })
+      .andWhere('cart.detailProduct = :detailProduct', { detailProduct: detailProductId })
       .execute();
   }
 
-  async checkProductExistsCart(userId, productId): Promise<Cart | Boolean> {
+  async checkDetailProductExistsCart(userId, detailProductId): Promise<Cart | boolean> {
     const query = this.cartsRepository
       .createQueryBuilder('cart')
       .where('cart.user = :id', { id: userId })
-      .andWhere('cart.product = :product', { product: productId });
+      .andWhere('cart.detailProduct = :detailProduct', { detailProduct: detailProductId });
 
     const item = await query.getOne();
     if (item) return item;
@@ -74,7 +76,7 @@ export class CartService {
     const query = this.cartsRepository
       .createQueryBuilder('cart')
       .innerJoinAndSelect('cart.user', 'user')
-      .innerJoinAndSelect('cart.product', 'products')
+      .innerJoinAndSelect('cart.detailProduct', 'detail-product')
       .where('user.id = :id', { id });
 
     const [items, total] = await query.getManyAndCount();

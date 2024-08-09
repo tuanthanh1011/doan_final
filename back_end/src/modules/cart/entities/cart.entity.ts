@@ -1,3 +1,4 @@
+import { DetailProduct } from 'src/modules/detail-product/entities/detail-product.entity';
 import { Products } from 'src/modules/products/entities/product.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
@@ -18,8 +19,8 @@ export class Cart {
   id: string;
 
   @Column()
-  @ManyToOne((type) => Products, (products) => products.cart)
-  product: string;
+  @ManyToOne((type) => DetailProduct, (detailProduct) => detailProduct.cart)
+  detailProduct: string;
 
   @Column()
   quantity: number;

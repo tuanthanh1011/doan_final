@@ -150,13 +150,12 @@ export class ConversationsService {
   }
 
   async closeConversation(conversationId: string) {
-
     const conversation = await this.conversationRepository
       .createQueryBuilder('conversation')
       .leftJoinAndSelect('conversation.customerId', 'customerId')
       .leftJoinAndSelect('conversation.staffId', 'staffId')
       .where('conversation.id = :id', { id: conversationId })
-      .getOne()
+      .getOne();
 
     if (!conversation) {
       throw new NotFoundException('Không tìm thấy cuộc trò chuyện hợp lệ');

@@ -21,7 +21,7 @@
             {{ product.productName }}
           </a>
 
-          <span class="stext-105 cl3"> {{ processedPrice }}đ </span>
+          <span class="stext-105 cl3"> {{ processedPrice }}</span>
         </div>
 
         <div class="block2-txt-child2 flex-r p-t-3" v-if="isLogin">
@@ -93,7 +93,27 @@ export default {
     });
 
     const processedPrice = computed(() => {
-      return formatNumberWithDots(product.value.price);
+      const detailProducts = product.value.detailProducts;
+
+      if (detailProducts.length > 0) {
+        const lstPrices = detailProducts.map((item) => item.price);
+
+        lstPrices.sort((a, b) => a - b);
+
+        const firstPrice = lstPrices[0];
+        const lastPrice = lstPrices[lstPrices.length - 1];
+
+        const displayPrice =
+          firstPrice === lastPrice
+            ? `${formatNumberWithDots(firstPrice)}đ`
+            : `${formatNumberWithDots(firstPrice)}đ - ${formatNumberWithDots(
+                lastPrice
+              )}đ`;
+
+        return displayPrice;
+      } else {
+        return 0;
+      }
     });
 
     const handleCloseModal = () => {

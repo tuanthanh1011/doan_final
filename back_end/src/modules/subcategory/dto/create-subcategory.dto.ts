@@ -12,5 +12,4 @@ export class CreateSubcategoryDto {
   @IsString()
   @IsNotEmpty()
   category: string;
-
 }

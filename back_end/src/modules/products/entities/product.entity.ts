@@ -28,17 +28,17 @@ export class Products {
   image: string;
 
   @Column({
-    default: ""
+    default: '',
   })
   trademark: string;
 
   @Column({
-    default: ""
+    default: '',
   })
   description: string;
-  
+
   @Column({
-    default: ""
+    default: '',
   })
   detailName: string;
 
@@ -56,15 +56,17 @@ export class Products {
   rateTotal: number;
 
   @Column({
+    default: 0,
+  })
+  totalSold: number;
+
+  @Column({
     default: true,
   })
   isActive: boolean;
 
   @OneToMany((type) => DetailProduct, (detailProduct) => detailProduct.product)
   detailProducts: DetailProduct[];
-
-  @OneToMany((type) => Cart, (cart) => cart.product)
-  cart: Cart[];
 
   @OneToMany((type) => Wishlist, (wishlist) => wishlist.product)
   wishList: Wishlist[];

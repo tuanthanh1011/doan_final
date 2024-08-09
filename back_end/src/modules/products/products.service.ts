@@ -23,13 +23,21 @@ export class ProductsService {
     private readonly minioClientService: MinioClientService,
   ) {}
   async create(createProductDto: CreateProductDto) {
-    const { subcategory, image, productName, description, trademark } = createProductDto;
+    const {
+      subcategory,
+      image,
+      productName,
+      description,
+      trademark,
+      detailName,
+    } = createProductDto;
     const subcategoryFind = await this.subcategoryService.findOne(subcategory);
     const create = this.productsRepository.create({
       image,
       productName,
       description,
       trademark,
+      detailName,
       subcategory: subcategoryFind,
     });
     return this.productsRepository.save(create);
@@ -50,6 +58,7 @@ export class ProductsService {
       .createQueryBuilder('product')
       .innerJoinAndSelect('product.subcategory', 'subcategory')
       .innerJoinAndSelect('subcategory.category', 'category')
+      .innerJoinAndSelect('product.detailProducts', 'detail-product')
       .where('product.isActive = true')
       .andWhere('subcategory.isActive');
 
@@ -113,6 +122,7 @@ export class ProductsService {
       .createQueryBuilder('product')
       .innerJoinAndSelect('product.subcategory', 'subcategory')
       .innerJoinAndSelect('subcategory.category', 'category')
+      .innerJoinAndSelect('product.detailProducts', 'detail-product')
       .andWhere('subcategory.isActive');
 
     if (search) {
@@ -235,6 +245,7 @@ export class ProductsService {
     const product = await this.productsRepository
       .createQueryBuilder('products')
       .innerJoinAndSelect('products.subcategory', 'subcategory')
+      .innerJoinAndSelect('products.detailProducts', 'detail-product')
       .where('products.id = :id', { id })
       .getOne();
 

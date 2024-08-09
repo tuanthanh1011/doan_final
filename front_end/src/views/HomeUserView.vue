@@ -11,14 +11,14 @@
       <div class="p-b-10" style="margin-bottom: 24px">
         <h5 class="ltext-103 cl5 f-arial" style="font-size: 28px">
           <router-link to="/do-nuong" style="color: black !important">
-            DANH SÁCH ĐỒ NƯỚNG
+            DANH SÁCH SẢN PHẨM
           </router-link>
         </h5>
       </div>
 
-      <list-product :listProduct="listProduct_nuong"></list-product>
+      <list-product :listProduct="listProduct"></list-product>
 
-      <div class="p-b-10" style="margin-bottom: 24px">
+      <!-- <div class="p-b-10" style="margin-bottom: 24px">
         <h5 class="ltext-103 cl5 f-arial" style="font-size: 28px">
           <router-link to="/do-lau" style="color: black !important">
             DANH SÁCH ĐỒ LẨU
@@ -26,7 +26,7 @@
         </h5>
       </div>
 
-      <list-product :listProduct="listProduct_lau"></list-product>
+      <list-product :listProduct="listProduct_lau"></list-product> -->
     </div>
   </section>
 
@@ -54,12 +54,6 @@ export default {
     const store = useStore();
 
     const listProduct = ref([]);
-    const listProduct_lau = ref([]);
-    const listProduct_nuong = ref([]);
-
-    function getRandomSubset(array, limit) {
-      return array.sort(() => 0.5 - Math.random()).slice(0, limit);
-    }
 
     const fetchData = async () => {
       try {
@@ -75,7 +69,6 @@ export default {
             return product.product.id;
           });
         }
-
         const result = await getAllProduct();
 
         const listProductProcessed = result.rows.map((product) => {
@@ -84,20 +77,6 @@ export default {
             isWishList: listProductWishlist.includes(product.id),
           };
         });
-
-        listProduct_lau.value = getRandomSubset(
-          listProductProcessed.filter((product) => {
-            return product.subcategory.category.categoryName == "Đồ lẩu";
-          }),
-          8
-        );
-
-        listProduct_nuong.value = getRandomSubset(
-          listProductProcessed.filter((product) => {
-            return product.subcategory.category.categoryName == "Đồ nướng";
-          }),
-          8
-        );
 
         listProduct.value = listProductProcessed;
       } catch (err) {
@@ -112,8 +91,6 @@ export default {
 
     return {
       listProduct,
-      listProduct_lau,
-      listProduct_nuong,
     };
   },
 };

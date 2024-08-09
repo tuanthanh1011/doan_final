@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsOptional, IsEnum, IsNumber } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
@@ -16,7 +22,7 @@ export class CreateProductDto {
   @IsString()
   @IsOptional()
   trademark: string;
-  
+
   @IsString()
   @IsOptional()
   description: string;

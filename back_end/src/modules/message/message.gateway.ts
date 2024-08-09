@@ -117,7 +117,7 @@ export class MessageGateway
       });
     }
 
-    let { sender, ...dataProcessed } = message as Message;
+    const { sender, ...dataProcessed } = message as Message;
 
     const user = await this.usersService.findOne(sender.toString());
 
@@ -170,7 +170,7 @@ export class MessageGateway
       content: content,
     });
 
-    let { sender, ...dataProcessed } = message;
+    const { sender, ...dataProcessed } = message;
 
     const userSender = await this.usersService.findOne(sender);
     const userReceiver = await this.usersService.findOne(receiverId);

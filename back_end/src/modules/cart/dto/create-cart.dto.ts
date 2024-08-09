@@ -8,5 +8,5 @@ export class CreateCartDto {
 
   @IsString()
   @IsNotEmpty()
-  product: string;
+  detailProduct: string;
 }
