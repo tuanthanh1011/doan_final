@@ -2,18 +2,18 @@
   <li class="header-cart-item flex-w flex-t m-b-12">
     <div
       class="header-cart-item-img"
-      @click="handleRemoveProductOfCart(product.product.id)"
+      @click="handleRemoveProductOfCart(product.detailProduct.id)"
     >
       <img :src="fullImageUrl" alt="IMG" />
     </div>
 
     <div class="header-cart-item-txt p-t-8">
       <a class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-        {{ product.product.productName }}
+        {{ fullNameProduct }}
       </a>
 
       <span class="header-cart-item-info">
-        {{ product.quantity }} x {{ processedPrice }} đ
+        {{ product?.quantity }} x {{ processedPrice }} đ
       </span>
     </div>
   </li>
@@ -41,13 +41,17 @@ export default {
     const { product } = toRefs(props);
 
     const fullImageUrl = computed(() => {
-      return config.MINIO_URL + product.value.product.image;
+      return config.MINIO_URL + product.value?.detailProduct?.product?.image;
+    });
+
+    const fullNameProduct = computed(() => {
+      const productName = product.value?.detailProduct?.product?.productName;
+      const detailProductName = product.value?.detailProduct?.content;
+      return `${productName} - ${detailProductName}`;
     });
 
     const processedPrice = computed(() => {
-      return formatNumberWithDots(
-        product.value.product.price
-      );
+      return formatNumberWithDots(product.value.detailProduct?.price);
     });
 
     const handleRemoveProductOfCart = async (productId) => {
@@ -68,6 +72,7 @@ export default {
       fullImageUrl,
       processedPrice,
       handleRemoveProductOfCart,
+      fullNameProduct,
     };
   },
 };

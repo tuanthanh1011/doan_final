@@ -10,12 +10,14 @@ import { CreateConversationDto } from './dto/create-conversation.dto';
 import { MessageService } from '../message/message.service';
 import { IUser } from '../users/users.interface';
 import { User } from '../users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ConversationsService {
   constructor(
     @InjectRepository(Conversation)
     private conversationRepository: Repository<Conversation>,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(
@@ -25,7 +27,7 @@ export class ConversationsService {
 
     const conversationPartial: DeepPartial<Conversation> = {
       customerId: { id: sender },
-      staffId: receiver ? { id: receiver } : null,
+      staffId: { id: this.configService.get<string>('ADMIN_ID') },
       isActive: isActive,
     };
 
@@ -105,7 +107,7 @@ export class ConversationsService {
   ): Promise<Conversation> {
     const conversationPartial: DeepPartial<Conversation> = {
       customerId: { id: senderId },
-      staffId: receiverId ? { id: receiverId } : null,
+      staffId: { id: this.configService.get<string>('ADMIN_ID') },
     };
 
     const conversation =

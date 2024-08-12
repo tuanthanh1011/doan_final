@@ -290,7 +290,7 @@
                         <img
                           v-if="productDetailCurrent.imageEdit"
                           :src="
-                            'http://localhost:9000/' +
+                            `${config.MINIO_URL}` +
                             productDetailCurrent.imageEdit
                           "
                           alt="avatar"
@@ -343,6 +343,7 @@ import { PlusOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import { reactive, ref, toRaw } from "vue";
 import { onMounted } from "vue";
+import config from "@/configs/config";
 import {
   EditOutlined,
   SearchOutlined,

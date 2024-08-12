@@ -51,7 +51,7 @@
               :class="{ await_confirm: conversation.staffId == null }"
             >
               <!-- Modal confirm support -->
-              <a-modal
+              <!-- <a-modal
                 v-model:open="open"
                 title="Thông báo"
                 @ok="handleOk(conversation)"
@@ -59,7 +59,7 @@
                 cancel-text="Hủy bỏ"
               >
                 <p>Xác nhận phiên trò chuyện</p>
-              </a-modal>
+              </a-modal> -->
               <!-- End modal -->
 
               <!-- <div class="badge bg-success float-right">5</div> -->
@@ -68,9 +68,7 @@
                 @click="conversation.staffId === null ? showModal() : null"
               >
                 <img
-                  :src="
-                    `http://localhost:9000/` + conversation.customerId.avatar
-                  "
+                  :src="`${config.MINIO_URL}` + conversation.customerId.avatar"
                   class="rounded-circle mr-1"
                   alt="Vanessa Tucker"
                   width="40"
@@ -128,7 +126,7 @@
                 >
                   <div>
                     <img
-                      :src="`http://localhost:9000/` + message.sender.avatar"
+                      :src="`${config.MINIO_URL}` + message.sender.avatar"
                       class="rounded-circle mr-1"
                       alt="Chris Wood"
                       width="40"
@@ -138,7 +136,10 @@
                       {{ formatDate(message.createdAt) }}
                     </div>
                   </div>
-                  <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                  <div
+                    class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3"
+                    style="margin-left: 4px"
+                  >
                     <div class="font-weight-bold mb-1">
                       {{ message.sender.username }}
                     </div>
@@ -186,6 +187,7 @@ import { useStore } from "vuex";
 import { setStaffToConversation } from "@/apis/modules/api.conversation";
 import { message } from "ant-design-vue";
 import { formatDate } from "@/utils/formatDate";
+import config from "@/configs/config";
 
 export default {
   setup() {
@@ -225,10 +227,9 @@ export default {
 
     // Kết hợp xử lý xác nhận vào cuộc trò chuyện
     const handleOk = async () => {
-      const item = selectedConversation.value;
       try {
         await setStaffToConversation({
-          conversation: item,
+          conversation: config.ADMIN_ID,
         });
         fetchAllConversation();
         open.value = false;
@@ -333,6 +334,7 @@ export default {
       disableInput,
       formatDate,
       handleCloseConversation,
+      config,
     };
   },
 };

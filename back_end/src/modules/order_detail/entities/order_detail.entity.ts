@@ -1,5 +1,5 @@
+import { DetailProduct } from 'src/modules/detail-product/entities/detail-product.entity';
 import { Order } from 'src/modules/order/entities/order.entity';
-import { Products } from 'src/modules/products/entities/product.entity';
 import {
   BeforeInsert,
   Column,
@@ -9,7 +9,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';  
 
 @Entity()
 export class OrderDetail {
@@ -21,8 +21,8 @@ export class OrderDetail {
   order: string;
 
   @Column()
-  @ManyToOne((type) => Products, (products) => products.orderDetail)
-  product: string;
+  @ManyToOne((type) => DetailProduct, (detailProduct) => detailProduct.id)
+  detailProduct: string;
 
   @Column()
   quantity: number;

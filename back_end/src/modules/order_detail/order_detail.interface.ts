@@ -1,6 +1,6 @@
 export interface CreateOrderDetail {
   order: string;
-  product: string;
+  detailProduct: string;
   quantity: number;
   price: string;
 }

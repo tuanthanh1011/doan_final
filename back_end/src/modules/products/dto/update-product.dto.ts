@@ -17,7 +17,19 @@ export class UpdateProductDto {
   @IsOptional()
   isActive: boolean;
 
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @IsString()
+  @IsOptional()
+  trademark: string;
+
+  @IsString()
+  @IsOptional()
+  detailName: string;
+
   @IsNumber()
   @IsOptional()
-  price: number;
+  increaseTotalSold: number;
 }

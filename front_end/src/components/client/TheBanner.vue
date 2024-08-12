@@ -6,7 +6,7 @@
           <!-- Block1 -->
           <div class="block1 wrap-pic-w">
             <img
-              :src="`${config.MINIO_URL}banners/a5-e1671443988522.jpg`"
+              :src="`${config.MINIO_URL}banners/banner-01.jpg`"
               alt="IMG-BANNER"
             />
 
@@ -14,13 +14,13 @@
               class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3"
             >
               <div class="block1-txt-child1 flex-col-l">
-                <span class="block1-name ltext-102 trans-04 p-b-8">
+                <!-- <span class="block1-name ltext-102 trans-04 p-b-8">
                   BỘ SƯU TẬP MỚI
                 </span>
 
                 <span class="block1-info stext-102 trans-04">
                   Cùng chờ đón các bộ sản phẩm mới và hấp dẫn!
-                </span>
+                </span> -->
               </div>
 
               <div class="block1-txt-child2 p-b-4 trans-05">
@@ -36,7 +36,7 @@
           <!-- Block1 -->
           <div class="block1 wrap-pic-w">
             <img
-              :src="`${config.MINIO_URL}banners/banner-ageloc-boost-myphamnuskin.jpg`"
+              :src="`${config.MINIO_URL}banners/banner-02.jpg`"
               alt="IMG-BANNER"
               style="height: 220px; background-color: rgba(0, 0, 0, 0.7)"
             />
@@ -45,13 +45,13 @@
               class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3"
             >
               <div class="block1-txt-child1 flex-col-l">
-                <span class="block1-name ltext-102 trans-04 p-b-8">
+                <!-- <span class="block1-name ltext-102 trans-04 p-b-8">
                   ĐÓN CHÀO HÈ VỚI ƯU ĐÃI KHỦNG
                 </span>
 
                 <span class="block1-info stext-102 trans-04">
                   Đặt hàng ngay để nhận ưu đãi hấp dẫn
-                </span>
+                </span> -->
               </div>
 
               <div class="block1-txt-child2 p-b-4 trans-05">
@@ -67,7 +67,7 @@
           <!-- Block1 -->
           <div class="block1 wrap-pic-w">
             <img
-             :src="`${config.MINIO_URL}banners/images (1).jpg`"
+              :src="`${config.MINIO_URL}banners/banner-03.jpg`"
               alt="IMG-BANNER"
             />
 
@@ -75,13 +75,13 @@
               class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3"
             >
               <div class="block1-txt-child1 flex-col-l">
-                <span class="block1-name ltext-102 trans-04 p-b-8">
+                <!-- <span class="block1-name ltext-102 trans-04 p-b-8">
                   GIAO HÀNG TẬN NƠI
                 </span>
 
                 <span class="block1-info stext-102 trans-04">
                   Miến phí vận chuyển đơn hàng nội thành Hà Nội
-                </span>
+                </span> -->
               </div>
 
               <div class="block1-txt-child2 p-b-4 trans-05">
@@ -103,9 +103,9 @@ import config from "@/configs/config";
 export default {
   setup() {
     return {
-      config
+      config,
     };
-  }
+  },
 };
 </script>
 

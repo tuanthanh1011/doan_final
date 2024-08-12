@@ -39,9 +39,15 @@
                   <div class="inner">
                     <h3>
                       Thông tin đơn hàng
-                      <span class="booking-status pending">{{
-                        order.status
-                      }}</span>
+                      <span
+                        :class="{
+                          'booking-status': true,
+                          pending: true,
+                          'color-status-cancel': order.status === 'Đã hủy',
+                        }"
+                      >
+                        {{ order.status }}
+                      </span>
                     </h3>
 
                     <div class="inner-booking-list d-flex">
@@ -142,5 +148,9 @@ export default {
 <style scoped>
 .mr-8 {
   margin-right: 8px;
+}
+
+.color-status-cancel {
+  background-color: red !important;
 }
 </style>

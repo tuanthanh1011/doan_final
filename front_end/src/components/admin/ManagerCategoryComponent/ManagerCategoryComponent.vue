@@ -358,8 +358,6 @@ async function fetchData() {
 
     categories.value = await getAllcategory();
 
-    console.log(categories.value);
-
     data.value = response.rows.map((subcategory) => ({
       key: subcategory.id,
       subcategoryId: subcategory.id,

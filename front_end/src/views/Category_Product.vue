@@ -3,10 +3,13 @@
   <section class="bg0 p-t-23 p-b-140">
     <div class="container">
       <div class="p-b-10">
-        <h4 class="ltext-103 cl5 f-arial" style="font-size: 24px">
-          THỰC ĐƠN NƯỚNG
+        <h4
+          class="ltext-103 cl5 f-arial"
+          style="font-size: 18px; text-transform: none"
+        >
+          {{ categoryName }}
           <span style="font-size: 14px; font-weight: 100">
-            / {{ currentPath }}</span
+            / {{ subCategoryNameCurrent }}</span
           >
         </h4>
       </div>
@@ -25,24 +28,17 @@
           </button>
 
           <button
+            v-for="(item, index) in listSubcate"
+            :key="index"
             class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-            @click="addParam({ subCategory: 'thit-them' })"
+            @click="
+              addParam({
+                subCategory: item.slug,
+                subCategoryName: item.subCategoryName,
+              })
+            "
           >
-            Thịt thêm
-          </button>
-
-          <button
-            class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-            @click="addParam({ subCategory: 'hai-san-them' })"
-          >
-            Hải sản thêm
-          </button>
-
-          <button
-            class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-            @click="addParam({ subCategory: 'rau-nam-them' })"
-          >
-            Rau nấm thêm
+            {{ item.subCategoryName }}
           </button>
         </div>
 
@@ -95,52 +91,86 @@
             <div class="filter-col1 p-r-15 p-b-27">
               <div class="mtext-102 cl2 p-b-15">Sắp xếp theo</div>
 
-              <ul>
-                <li class="p-b-6">
-                  <a
-                    href="#"
-                    class="filter-link stext-106 trans-04"
-                    @click="
-                      addParam({
-                        sortBy: 'id',
-                        sortOrder: 'ASC',
-                      })
-                    "
-                  >
-                    Mặc định
-                  </a>
-                </li>
+              <div class="d-flex">
+                <ul style="margin: 0 32px 0 0">
+                  <li class="p-b-6">
+                    <a
+                      href="#"
+                      class="filter-link stext-106 trans-04"
+                      @click="
+                        addParam({
+                          sortBy: 'id',
+                          sortOrder: 'ASC',
+                        })
+                      "
+                    >
+                      Mặc định
+                    </a>
+                  </li>
 
-                <li class="p-b-6">
-                  <a
-                    href="#"
-                    class="filter-link stext-106 trans-04"
-                    @click="
-                      addParam({
-                        sortBy: 'price',
-                        sortOrder: 'ASC',
-                      })
-                    "
-                  >
-                    Giá từ thấp tới cao
-                  </a>
-                </li>
+                  <li class="p-b-6">
+                    <a
+                      href="#"
+                      class="filter-link stext-106 trans-04"
+                      @click="
+                        addParam({
+                          sortBy: 'price',
+                          sortOrder: 'ASC',
+                        })
+                      "
+                    >
+                      Giá từ thấp tới cao
+                    </a>
+                  </li>
 
-                <li class="p-b-6">
-                  <a
-                    href="#"
-                    class="filter-link stext-106 trans-04"
-                    @click="
-                      addParam({
-                        sortBy: 'price',
-                        sortOrder: 'DESC',
-                      })
-                    "
-                  >
-                    Giá từ cao tới thấp
-                  </a>
-                </li>
-              </ul>
+                  <li class="p-b-6">
+                    <a
+                      href="#"
+                      class="filter-link stext-106 trans-04"
+                      @click="
+                        addParam({
+                          sortBy: 'price',
+                          sortOrder: 'DESC',
+                        })
+                      "
+                    >
+                      Giá từ cao tới thấp
+                    </a>
+                  </li>
+                </ul>
+
+                <ul style="margin: 0 32px 0 0">
+                  <li class="p-b-6">
+                    <a
+                      href="#"
+                      class="filter-link stext-106 trans-04"
+                      @click="
+                        addParam({
+                          sortBy: 'totalSold',
+                          sortOrder: 'DESC',
+                        })
+                      "
+                    >
+                      Bán chạy nhất
+                    </a>
+                  </li>
+
+                  <li class="p-b-6">
+                    <a
+                      href="#"
+                      class="filter-link stext-106 trans-04"
+                      @click="
+                        addParam({
+                          sortBy: 'rateAvg',
+                          sortOrder: 'DESC',
+                        })
+                      "
+                    >
+                      Đánh giá tốt nhất
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <!-- <div class="filter-col2 p-r-15 p-b-27">
@@ -211,6 +241,7 @@
         v-model:current="page"
         :total="total"
         show-less-items
+        :showSizeChanger="false"
         style="text-align: center; margin-top: 18px"
         @change="onChange"
       />
@@ -227,88 +258,118 @@
 
 <script>
 import initializeJQueryLogic from "@/core-js/main";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { getAllProduct } from "@/apis/modules/api.product";
 import ListProduct from "@/components/client/list-products/ListProduct.vue";
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 import { getProductWishListApi } from "@/apis/modules/api.wish_list";
+import { getAllSubcateByCategorySlug } from "@/apis/modules/api.subcategory";
 export default {
   components: { ListProduct },
   setup() {
     const store = useStore();
+    const route = useRoute();
+
     const listProduct = ref([]);
+    const listSubcate = ref([]);
     const page = ref(1);
-    const params = ref({
-      category: "do-nuong",
-      page: page.value,
-      perPage: 8,
+    const total = ref(0);
+    const categorySlug = ref(route.path.split("/").pop());
+    const categoryName = ref("");
+    const subCategoryNameCurrent = ref("Tất cả sản phẩm");
+    const currentPath = ref("Tất cả sản phẩm");
+    const customParams = ref({});
+
+    const params = ref({});
+
+    const lstCategory = [
+      { slug: "cham-soc-da", categoryName: "Chăm sóc da" },
+      { slug: "trang-diem", categoryName: "Trang điểm" },
+      { slug: "nuoc-hoa", categoryName: "Nước hoa" },
+      { slug: "cham-soc-co-the", categoryName: "Chăm sóc cơ thể" },
+      { slug: "cham-soc-toc", categoryName: "Chăm sóc tóc" },
+      { slug: "serum-dac-tri", categoryName: "Serum, sản phẩm đặc trị" },
+      { slug: "cham-soc-rang-mieng", categoryName: "Chăm sóc răng miệng" },
+      { slug: "cham-soc-mat-moi", categoryName: "Chăm sóc mắt và môi" },
+    ];
+
+    const foundCategory = lstCategory.find(
+      (item) => item.slug === categorySlug.value
+    );
+    categoryName.value = foundCategory ? foundCategory.categoryName : "";
+
+    // Watcher để cập nhật categoryName khi categorySlug thay đổi
+    watch(categorySlug, (newSlug) => {
+      const foundCategory = lstCategory.find((item) => item.slug === newSlug);
+      categoryName.value = foundCategory ? foundCategory.categoryName : "";
+      fetchData();
     });
 
-    const total = ref(0);
+    const fetchData = async () => {
+      try {
+        const userLogin = computed(() => store.state.auth.userLogin);
+        let listProductWishlist = [];
+
+        if (userLogin.value.id) {
+          listProductWishlist = (
+            await getProductWishListApi(userLogin.value.id)
+          ).rows.map((product) => product.product.id);
+        }
+
+        params.value = {
+          category: categorySlug.value,
+          page: page.value,
+          perPage: 8,
+          ...customParams.value,
+        };
+
+        const result = await getAllProduct(params.value);
+        const subCategories = await getAllSubcateByCategorySlug(
+          categorySlug.value
+        );
+
+        listSubcate.value = subCategories?.rows || [];
+        total.value = result.total;
+
+        listProduct.value = result.rows.map((product) => ({
+          ...product,
+          isWishList: listProductWishlist.includes(product.id),
+        }));
+
+        params.value.page = 1;
+      } catch (err) {
+        console.error("Đã xảy ra lỗi", err);
+      }
+    };
 
     const onChange = (page) => {
       params.value.page = page;
       fetchData();
     };
 
-    const currentPath = ref("Tất cả sản phẩm");
-
-    const fetchData = async () => {
-      try {
-        const userLogin = computed(() => store.state.auth.userLogin);
-
-        let listProductWishlist = [];
-        if (userLogin.value.id) {
-          listProductWishlist = (
-            await getProductWishListApi(userLogin.value.id)
-          ).rows;
-
-          listProductWishlist = listProductWishlist.map((product) => {
-            return product.product.id;
-          });
-        }
-
-        const result = await getAllProduct(params.value);
-
-        total.value = result.total;
-        const listProductProcessed = result.rows.map((product) => {
-          return {
-            ...product,
-            isWishList: listProductWishlist.includes(product.id),
-          };
-        });
-
-        listProduct.value = listProductProcessed;
-        params.value.page = 1;
-      } catch (err) {
-        console.log("Đã xảy ra lỗi", err);
-      }
-    };
-
     const addParam = (param) => {
-      switch (param.subCategory) {
-        case "thit-them":
-          page.value = 1;
-          currentPath.value = "Thịt thêm";
-          break;
-        case "rau-nam-them":
-          page.value = 1;
-          currentPath.value = "Rau nấm thêm";
-          break;
-        case "hai-san-them":
-          page.value = 1;
-          currentPath.value = "Hải sản thêm";
-          break;
-        default:
-          page.value = 1;
-          currentPath.value = "Tất cả sản phẩm";
-          break;
-      }
-      for (const key in param) {
-        params.value[key] = param[key];
-      }
+      const { subCategory, subCategoryName, sortBy, sortOrder } = param;
+      page.value = 1;
+      currentPath.value = param.subCategory || "Tất cả sản phẩm";
+      subCategoryNameCurrent.value = subCategoryName || "Tất cả sản phẩm";
+
+      customParams.value = {
+        subCategory,
+        sortBy,
+        sortOrder,
+      };
+
       fetchData();
     };
+
+    watch(
+      () => route.path,
+      (newPath) => {
+        categorySlug.value = newPath.split("/").pop();
+        fetchData();
+      }
+    );
 
     onMounted(() => {
       initializeJQueryLogic();
@@ -324,6 +385,9 @@ export default {
       page,
       onChange,
       params,
+      categoryName,
+      listSubcate,
+      subCategoryNameCurrent,
     };
   },
 };

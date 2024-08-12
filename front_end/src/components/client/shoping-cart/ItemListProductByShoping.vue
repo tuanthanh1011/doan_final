@@ -3,12 +3,12 @@
     <td class="column-1">
       <div
         class="how-itemcart1"
-        @click="handleRemoveProductOfCart(product.product.id)"
+        @click="handleRemoveProductOfCart(product.detailProduct.id)"
       >
         <img :src="fullImageUrl" alt="IMG" />
       </div>
     </td>
-    <td class="column-2">{{ product.product.productName }}</td>
+    <td class="column-2">{{ fullNameProduct }}</td>
     <td class="column-3">{{ processedPrice }} đ</td>
     <td class="column-4">
       <div class="wrap-num-product flex-w m-l-auto m-r-0">
@@ -22,6 +22,7 @@
         <input
           class="mtext-104 cl3 txt-center num-product"
           type="number"
+          readonly
           v-model="numberProduct"
         />
 
@@ -59,27 +60,45 @@ export default {
     const { product } = toRefs(props);
 
     const numberProduct = ref(product.value.quantity);
+
     const totalPriceProduct = computed(() => {
       return formatNumberWithDots(
-        numberProduct.value * product.value.product.price
+        numberProduct.value * product.value.detailProduct?.price
       );
     });
 
     const fullImageUrl = computed(() => {
-      return config.MINIO_URL + product.value.product.image;
+      return config.MINIO_URL + product.value?.detailProduct?.product?.image;
+    });
+
+    const fullNameProduct = computed(() => {
+      const productName = product.value?.detailProduct?.product?.productName;
+      const detailProductName = product.value?.detailProduct?.content;
+      return `${productName} - ${detailProductName}`;
     });
 
     const processedPrice = computed(() => {
-      return formatNumberWithDots(product.value.product.price);
+      return formatNumberWithDots(product.value.detailProduct?.price);
     });
 
     const handleChangeNumberProduct = async (number) => {
+      if (
+        numberProduct.value + number >
+        product.value?.detailProduct?.quantity
+      ) {
+        displayToast(
+          store.dispatch,
+          typeAlertBox.ERROR,
+          "Số lượng yêu cầu vượt quá số lượng trong kho!"
+        );
+        return;
+      }
       if (numberProduct.value + number >= 1) {
         numberProduct.value = numberProduct.value + number;
 
         store.commit("cart/setQuantityOfProduct", {
           quantity: numberProduct.value,
-          productId: product.value.product.id,
+          productId: product.value.detailProduct.id,
         });
 
         try {
@@ -109,6 +128,7 @@ export default {
 
     return {
       fullImageUrl,
+      fullNameProduct,
       processedPrice,
       handleRemoveProductOfCart,
       numberProduct,

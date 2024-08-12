@@ -6,9 +6,7 @@ import HomeUserView from "../views/HomeUserView.vue";
 import NotFound from "../views/NotFoundView.vue";
 import AboutView from "../views/AboutView.vue";
 import ContactView from "../views/ContactView.vue";
-import Category_DoNuong from "../views/Category_DoNuongView.vue";
-import Category_DoLau from "../views/Category_DoLauView.vue";
-import Category_MonAn from "../views/Category_MonAnView.vue";
+import Category_Product from "../views/Category_Product.vue";
 import ShopingCart from "../views/ShopingCartView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import MyOrderView from "../views/MyOrderView.vue";
@@ -140,28 +138,66 @@ const routes = [
     meta: { requiresAuth: true, roleAdmin: true },
   },
   {
-    path: "/do-nuong",
-    name: "do-nuong",
-    component: Category_DoNuong,
-    meta: { requiresAuth: false, roleAdmin: false },
-  },
-  {
     path: "/wish-list",
     name: "wish-list",
     component: WishListView,
     meta: { requiresAuth: true, roleAdmin: false },
   },
   {
-    path: "/do-lau",
-    name: "do-lau",
-    component: Category_DoLau,
+    path: "/danh-muc",
+    name: "danh-muc",
+    component: Category_Product,
     meta: { requiresAuth: false, roleAdmin: false },
-  },
-  {
-    path: "/mon-an",
-    name: "mon-an",
-    component: Category_MonAn,
-    meta: { requiresAuth: false, roleAdmin: false },
+    children: [
+      {
+        path: "cham-soc-da",
+        name: "cham-soc-da",
+        component: Category_Product,
+        meta: { requiresAuth: false, roleAdmin: false },
+      },
+      {
+        path: "trang-diem",
+        name: "trang-diem",
+        component: Category_Product,
+        meta: { requiresAuth: false, roleAdmin: false },
+      },
+      {
+        path: "nuoc-hoa",
+        name: "nuoc-hoa",
+        component: Category_Product,
+        meta: { requiresAuth: false, roleAdmin: false },
+      },
+      {
+        path: "cham-soc-co-the",
+        name: "cham-soc-co-the",
+        component: Category_Product,
+        meta: { requiresAuth: false, roleAdmin: false },
+      },
+      {
+        path: "cham-soc-toc",
+        name: "cham-soc-toc",
+        component: Category_Product,
+        meta: { requiresAuth: false, roleAdmin: false },
+      },
+      {
+        path: "serum-dac-tri",
+        name: "serum-dac-tri",
+        component: Category_Product,
+        meta: { requiresAuth: false, roleAdmin: false },
+      },
+      {
+        path: "cham-soc-rang-mieng",
+        name: "cham-soc-rang-mieng",
+        component: Category_Product,
+        meta: { requiresAuth: false, roleAdmin: false },
+      },
+      {
+        path: "cham-soc-mat-moi",
+        name: "cham-soc-mat-moi",
+        component: Category_Product,
+        meta: { requiresAuth: false, roleAdmin: false },
+      },
+    ],
   },
   {
     path: "/shoping-cart",

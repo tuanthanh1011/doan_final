@@ -11,6 +11,8 @@ import { OrderDetailService } from '../order_detail/order_detail.service';
 import { IUser } from '../users/users.interface';
 import { FindOrderDto } from './dto/list-order.dto';
 import { CartService } from '../cart/cart.service';
+import { ProductsService } from '../products/products.service';
+import { UpdateProductDto } from '../products/dto/update-product.dto';
 
 @Injectable()
 export class OrderService {
@@ -19,6 +21,7 @@ export class OrderService {
     private ordersRepository: Repository<Order>,
 
     private readonly orderDetailService: OrderDetailService,
+    private readonly productsService: ProductsService,
     private readonly cartService: CartService,
   ) {}
 
@@ -49,7 +52,7 @@ export class OrderService {
     listProduct.forEach(async (product: any) => {
       await this.orderDetailService.create({
         order: create.id,
-        product: product.id,
+        detailProduct: product.id,
         quantity: product.quantity,
         price: product.price,
       });
@@ -182,9 +185,14 @@ export class OrderService {
   }
 
   async update(id: string, status: string) {
-    const order = await this.ordersRepository.findOneBy({
-      id: id,
-    });
+    const [order, orderDetail] = await Promise.all([
+      this.ordersRepository.findOneBy({
+        id: id,
+      }),
+      this.orderDetailService.findOneByOrderId(id),
+    ]);
+
+    const beforeStatus = order.status;
 
     if (!order) {
       throw new NotFoundException('Không tìm thấy đơn hàng phù hợp');
@@ -193,6 +201,38 @@ export class OrderService {
     order.status = status;
 
     await this.ordersRepository.save(order);
+
+    if (
+      beforeStatus !== 'Giao hàng thành công' &&
+      status === 'Giao hàng thành công'
+    ) {
+      await Promise.all(
+        orderDetail.map(async (item: any) => {
+          return await this.productsService.update(
+            item.detailProduct?.product?.id,
+            {
+              increaseTotalSold: item.quantity as number,
+            } as UpdateProductDto,
+          );
+        }),
+      );
+    }
+
+    if (
+      beforeStatus === 'Giao hàng thành công' &&
+      status !== 'Giao hàng thành công'
+    ) {
+      await Promise.all(
+        orderDetail.map(async (item: any) => {
+          return await this.productsService.update(
+            item.detailProduct?.product?.id,
+            {
+              increaseTotalSold: (item.quantity as number) * -1,
+            } as UpdateProductDto,
+          );
+        }),
+      );
+    }
 
     return order;
   }

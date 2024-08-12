@@ -30,7 +30,8 @@ export class OrderDetailService {
   async findOneByOrderId(orderId: string) {
     const query = this.orderDetailRepository
       .createQueryBuilder('order_detail')
-      .innerJoinAndSelect('order_detail.product', 'products')
+      .innerJoinAndSelect('order_detail.detailProduct', 'detail-product')
+      .innerJoinAndSelect('detail-product.product', 'products')
       .where('order_detail.orderId = :orderId', { orderId });
 
     return query.getMany();

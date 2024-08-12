@@ -18,7 +18,7 @@ const moduleCart = {
 
     setQuantityOfProduct(state, { quantity, productId }) {
       const product = state.listProductOfCart.find(
-        (item) => item.product.id === productId
+        (item) => item.detailProduct.id === productId
       );
 
       if (product) {

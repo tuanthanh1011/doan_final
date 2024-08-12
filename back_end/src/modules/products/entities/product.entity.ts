@@ -77,9 +77,6 @@ export class Products {
   )
   productReview: ProductReview[];
 
-  @OneToMany((type) => OrderDetail, (order_detail) => order_detail.product)
-  orderDetail: OrderDetail[];
-
   @CreateDateColumn()
   createdAt: Date;
 

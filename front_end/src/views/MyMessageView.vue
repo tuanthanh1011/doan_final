@@ -7,7 +7,7 @@
             class="messages-headline"
             style="display: flex; justify-content: space-between"
           >
-            <h4>Kira BBQ</h4>
+            <h4>BEAUTY</h4>
             <!-- <a href="#" class="message-action"
               ><i class="sl sl-icon-trash"></i> Delete Conversation</a
             > -->
@@ -34,7 +34,7 @@
             >
               <div>
                 <img
-                  :src="`http://localhost:9000/` + message.sender.avatar"
+                  :src="`${config.MINIO_URL}` + message.sender.avatar"
                   class="rounded-circle mr-1"
                   alt="Chris Wood"
                   width="40"
@@ -83,6 +83,7 @@ import { io } from "socket.io-client";
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { formatDate } from "@/utils/formatDate";
+import config from "@/configs/config";
 
 export default {
   setup() {
@@ -177,6 +178,7 @@ export default {
       userLogin,
       chatMessagesRef,
       formatDate,
+      config,
     };
   },
 };

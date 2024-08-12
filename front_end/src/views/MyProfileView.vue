@@ -104,6 +104,7 @@ export default {
     const urlImage = ref("");
     const username = ref("");
     const userLogin = ref({});
+    const fileList = ref([]);
 
     const listUserAddressByUser = computed(
       () => store.state.userAddress.listUserAddressByUser
@@ -153,20 +154,37 @@ export default {
     };
 
     const beforeUpload = async (file) => {
+      console.log("Before Upload File:", file);
       const formData = new FormData();
+      console.log(formData);
       formData.append("file", file);
-      try {
-        const response = await uploadAvatarApi(formData);
+      console.log(formData);
 
-        urlImage.value = response.urlImage;
+      try {
+        console.log("FORM DATA: ", formData);
+        const response = await uploadAvatarApi(formData);
+        console.log("Upload Response:", response);
+
+        if (response.urlImage) {
+          urlImage.value = response.urlImage;
+          fileList.value = [{ ...file, url: response.urlImage }];
+        }
+
+        displayToast(
+          store.dispatch,
+          typeAlertBox.SUCCESS,
+          "Upload ảnh thành công"
+        );
       } catch (err) {
+        console.error("Upload Error:", err);
         displayToast(
           store.dispatch,
           typeAlertBox.ERROR,
-          err.response.data.message || "Có lỗi xảy ra"
+          err.response.data.message || "Có lỗi xảy ra trong quá trình upload"
         );
       }
 
+      // Ngăn chặn việc upload tự động
       return false;
     };
 
@@ -178,6 +196,7 @@ export default {
       handleSaveChangeInfo,
       username,
       userLogin,
+      fileList,
     };
   },
 };

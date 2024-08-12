@@ -100,6 +100,19 @@ export class SubcategoryService {
     };
   }
 
+  async findAllSubcateByCategorySlug(slug: string) {
+    const query = this.subCategoryRepository
+      .createQueryBuilder('subcategory')
+      .innerJoinAndSelect('subcategory.category', 'category')
+      .where('category.slug = :slug', { slug });
+
+    const [items, total] = await query.getManyAndCount();
+    return {
+      rows: items,
+      total,
+    };
+  }
+
   async findOne(id: string): Promise<Subcategory> {
     const subcategory = await this.subCategoryRepository
       .createQueryBuilder('subcategory')

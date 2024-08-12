@@ -85,10 +85,17 @@ export class ProductsService {
     }
 
     if (sortBy) {
-      query.orderBy(
-        `product.${sortBy}`,
-        sortOrder.toUpperCase() as 'ASC' | 'DESC',
-      );
+      if (sortBy === 'price') {
+        query.orderBy(
+          `detail-product.price`,
+          sortOrder.toUpperCase() as 'ASC' | 'DESC',
+        );
+      } else {
+        query.orderBy(
+          `product.${sortBy}`,
+          sortOrder.toUpperCase() as 'ASC' | 'DESC',
+        );
+      }
     }
 
     if (page && perPage) {
@@ -148,10 +155,17 @@ export class ProductsService {
     }
 
     if (sortBy) {
-      query.orderBy(
-        `product.${sortBy}`,
-        sortOrder.toUpperCase() as 'ASC' | 'DESC',
-      );
+      if (sortBy === 'price') {
+        query.orderBy(
+          `detail-product.price`,
+          sortOrder.toUpperCase() as 'ASC' | 'DESC',
+        );
+      } else {
+        query.orderBy(
+          `product.${sortBy}`,
+          sortOrder.toUpperCase() as 'ASC' | 'DESC',
+        );
+      }
     }
 
     if (page && perPage) {
@@ -257,8 +271,16 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
-    const { image, productName, subcategory, isActive, price } =
-      updateProductDto;
+    const {
+      image,
+      productName,
+      subcategory,
+      isActive,
+      description,
+      trademark,
+      detailName,
+      increaseTotalSold,
+    } = updateProductDto;
 
     const product = await this.productsRepository.findOneBy({
       id: id,
@@ -277,11 +299,33 @@ export class ProductsService {
       product.subcategory = subcategoryInstance;
     }
 
-    product.image = image;
+    if (image) {
+      product.image = image;
+    }
 
-    product.productName = productName;
+    if (productName) {
+      product.productName = productName;
+    }
 
-    product.isActive = isActive;
+    if (isActive) {
+      product.isActive = isActive;
+    }
+
+    if (description) {
+      product.description = description;
+    }
+
+    if (trademark) {
+      product.trademark = trademark;
+    }
+
+    if (detailName) {
+      product.detailName = detailName;
+    }
+
+    if (increaseTotalSold) {
+      product.totalSold = (product.totalSold || 0) + increaseTotalSold;
+    }
 
     await this.productsRepository.save(product);
 

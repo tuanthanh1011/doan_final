@@ -7,6 +7,7 @@
         <a
           class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 custom-btn"
           @click="handleAll(product.id)"
+          style="box-shadow: 0px 4px 8px 4px rgba(0, 0, 0, 0.4)"
         >
           Xem chi tiết
         </a>
@@ -21,7 +22,12 @@
             {{ product.productName }}
           </a>
 
-          <span class="stext-105 cl3"> {{ processedPrice }}</span>
+          <span class="stext-105 cl3" style="width: 100%">
+            <div style="display: flex; justify-content: space-between">
+              <p>{{ processedPrice }}</p>
+              <p style="font-size: 12px">{{ product.totalSold }} đã bán</p>
+            </div>
+          </span>
         </div>
 
         <div class="block2-txt-child2 flex-r p-t-3" v-if="isLogin">
@@ -29,7 +35,7 @@
             <img
               v-if="!isWishList"
               class=""
-              src="images/icons/icon-heart-01.png"
+              :src="`${config.MINIO_URL}icons/icon-heart-01.png`"
               alt="ICON"
               @click="handleAddWishList(product.id)"
               style="cursor: pointer"
@@ -37,7 +43,7 @@
             <img
               v-if="isWishList"
               class=""
-              src="images/icons/icon-heart-02.png"
+              :src="`${config.MINIO_URL}icons/icon-heart-02.png`"
               alt="ICON"
               @click="handleRemoveWishList(product.id)"
               style="cursor: pointer"
@@ -93,7 +99,7 @@ export default {
     });
 
     const processedPrice = computed(() => {
-      const detailProducts = product.value.detailProducts;
+      const detailProducts = product.value.detailProducts || [];
 
       if (detailProducts.length > 0) {
         const lstPrices = detailProducts.map((item) => item.price);
@@ -194,6 +200,7 @@ export default {
       handleRemoveWishList,
       isWishList,
       isLogin,
+      config,
     };
   },
 };

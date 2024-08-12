@@ -45,7 +45,8 @@
           </div>
           <span style="margin-left: 20px; font-style: italic; font-size: 12px">Lưu ý: Khách hàng có thể thực hiện đánh giá các món ăn sau khi giao hàng thành công</span>
         </article>
-        <div class="track">
+
+        <div class="track" v-if="orderDetail.status && orderDetail.status !== 'Đã hủy'">
           <div class="step" :class="{ active: statusOrder.pending }">
             <span class="icon"> <i class="fa-regular fa-clock"></i> </span>
             <span class="text">Chờ xác nhận</span>
@@ -63,6 +64,14 @@
             <span class="text">Giao hàng thành công</span>
           </div>
         </div>
+
+        <div class="track" v-if="orderDetail.status && orderDetail.status === 'Đã hủy'" style="background-color: #ffc9c9">
+          <div class="step" :class="{ active: statusOrder.delivered }">
+            <span class="icon" style="color: #fff; background-color: red"> <i class="fa-solid fa-xmark"></i> </span>
+            <span class="text">Đã hủy</span>
+          </div>
+        </div>
+
         <hr />
         <ul class="row">
           <li
@@ -75,19 +84,19 @@
             <figure class="itemside mb-3">
               <div class="aside">
                 <img
-                  :src="`http://localhost:9000/` + item.product.image"
+                  :src="`${config.MINIO_URL}` + item.detailProduct?.product?.image"
                   class="img-sm border"
                 />
               </div>
-              <figcaption class="info align-self-center">
+              <div class="info align-self-center">
                 <p class="title">
-                  Sản phẩm: {{ item.product.productName }} <br />
+                  Sản phẩm: {{ item.detailProduct?.product?.productName }} - {{ item.detailProduct?.content }} <br />
                   Số lượng: {{ item.quantity }}
                 </p>
                 <span class="text-muted">
                   Giá: {{ item.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") }} đ
                 </span>
-              </figcaption>
+              </div>
             </figure>
           </li>
         </ul>
@@ -112,7 +121,10 @@ import ModalCreateReviewProduct from "@/components/client/review_product/modal.c
 import { useRoute } from "vue-router";
 import { onMounted, ref } from "vue";
 import { TypeOrder } from "@/constants/enum";
-import { message } from 'ant-design-vue';
+import config from "@/configs/config"
+import displayToast from '@/utils/handleToast';
+import { useStore } from 'vuex';
+import { typeAlertBox } from "@/constants/enum";
 
 export default {
   components: {
@@ -120,6 +132,7 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const store = useStore();
     const orderDetail = ref({});
     const statusOrder = ref({
       pending: true,
@@ -176,11 +189,20 @@ export default {
     const handleDelete = async (orderId) => {
       try {
         await handleCancelOrder(orderId)
-        message.success('Hủy đơn thành công')
+        displayToast(
+          store.dispatch,
+          typeAlertBox.SUCCESS,
+          "Hủy đơn thành công!"
+        );
+        fetchData()
       }
       catch (err) {
         console.log(err)
-        message.error(err.response.data.message || 'Có lỗi xảy ra')
+        displayToast(
+          store.dispatch,
+          typeAlertBox.ERROR,
+          err.response.data.message || 'Có lỗi xảy ra'
+        );
       }
     }
 
@@ -193,7 +215,8 @@ export default {
       statusOrder,
       handleChangeReview,
       reviewModal,
-      handleDelete
+      handleDelete,
+      config
     };
   }
 };
@@ -339,4 +362,5 @@ p {
   border-color: #ff2b00;
   border-radius: 1px;
 }
+
 </style>

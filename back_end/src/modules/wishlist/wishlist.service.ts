@@ -29,6 +29,7 @@ export class WishlistService {
     const productWishList = await this.wishlistRepository
       .createQueryBuilder('wishlist')
       .innerJoinAndSelect('wishlist.product', 'products')
+      .innerJoinAndSelect('products.detailProducts', 'detail-product')
       .where('wishlist.user = :id', { id: userId })
       .getManyAndCount();
 

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,33 +17,56 @@ export class CartService {
     @InjectRepository(Cart)
     private cartsRepository: Repository<Cart>,
     private readonly productsService: ProductsService,
-    private readonly detailProductService: DetailProductService
+    private readonly detailProductService: DetailProductService,
   ) {}
+
   async create(createCartDto: CreateCartDto, id: string) {
     try {
       const { detailProduct, quantity } = createCartDto;
-      await this.detailProductService.findDetailProductById(detailProduct);
+      const detailProductResult =
+        await this.detailProductService.findDetailProductById(detailProduct);
       const resultFindCart: any = await this.checkDetailProductExistsCart(
         id,
         detailProduct,
       );
+
       if (resultFindCart) {
+        if (resultFindCart.quantity >= detailProductResult.quantity) {
+          throw new BadRequestException(
+            'Số lượng yêu cầu vượt quá số lượng trong kho!',
+          );
+        }
+
         resultFindCart.quantity += quantity;
-        return await this.cartsRepository.save(resultFindCart);
+        const updatedCart = await this.cartsRepository.save(resultFindCart);
+        return {
+          statusCode: 200,
+          message: 'Cập nhật giỏ hàng thành công',
+          data: updatedCart,
+        };
       }
+
       const create: Cart = this.cartsRepository.create({
         user: id,
         quantity,
         detailProduct,
       });
-      return this.cartsRepository.save(create);
+      const newCart = await this.cartsRepository.save(create);
+      return {
+        statusCode: 201,
+        message: 'Tạo giỏ hàng thành công',
+        data: newCart,
+      };
     } catch (err) {
-      console.log(err);
+      throw new BadRequestException(err.message || 'Có lỗi xảy ra khi xử lý yêu cầu');
     }
   }
 
   async deleteProductOfCart(userId: string, detailProductId: string) {
-    const resultFindCart = await this.checkDetailProductExistsCart(userId, detailProductId);
+    const resultFindCart = await this.checkDetailProductExistsCart(
+      userId,
+      detailProductId,
+    );
 
     if (!resultFindCart) {
       throw new NotFoundException('Không tìm thấy sản phẩm phù hợp');
@@ -49,15 +76,22 @@ export class CartService {
       .createQueryBuilder('cart')
       .delete()
       .where('cart.user = :id', { id: userId })
-      .andWhere('cart.detailProduct = :detailProduct', { detailProduct: detailProductId })
+      .andWhere('cart.detailProduct = :detailProduct', {
+        detailProduct: detailProductId,
+      })
       .execute();
   }
 
-  async checkDetailProductExistsCart(userId, detailProductId): Promise<Cart | boolean> {
+  async checkDetailProductExistsCart(
+    userId,
+    detailProductId,
+  ): Promise<Cart | boolean> {
     const query = this.cartsRepository
       .createQueryBuilder('cart')
       .where('cart.user = :id', { id: userId })
-      .andWhere('cart.detailProduct = :detailProduct', { detailProduct: detailProductId });
+      .andWhere('cart.detailProduct = :detailProduct', {
+        detailProduct: detailProductId,
+      });
 
     const item = await query.getOne();
     if (item) return item;

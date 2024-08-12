@@ -28,7 +28,7 @@ export class User {
   email: string;
 
   @Column({
-    default: 'avatar/avatar_default.png',
+    default: 'avatar/avatar_default.jpg',
   })
   avatar: string;
 

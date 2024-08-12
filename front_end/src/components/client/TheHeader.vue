@@ -12,7 +12,7 @@
               0123456789
 
               <i class="fa-regular fa-envelope ml-2"></i>
-              kirabbq@gmail.com
+              beautycosmetics@gmail.com
             </div>
 
             <div>
@@ -28,7 +28,7 @@
                       border-radius: 12px;
                       margin-right: 8px;
                     "
-                    :src="`http://localhost:9000/` + userLogin.avatar"
+                    :src="`${config.MINIO_URL}${userLogin.avatar}`"
                     alt=""
                   />
                   <span style="color: white">
@@ -59,12 +59,6 @@
                     <li>
                       <router-link to="/order-history" class="f-arial"
                         >Quản lý đơn hàng</router-link
-                      >
-                    </li>
-
-                    <li>
-                      <router-link to="/my-manager-message" class="f-arial"
-                        >Liên hệ trực tuyến</router-link
                       >
                     </li>
                   </ul>
@@ -106,37 +100,78 @@
             <!-- Menu desktop -->
             <div class="menu-desktop">
               <ul class="main-menu">
+                <!-- Mục Trang chủ -->
                 <li>
                   <router-link to="/home" class="f-arial"
                     >Trang chủ</router-link
                   >
                 </li>
 
+                <!-- Mục Giới thiệu -->
                 <li>
                   <router-link to="/about" class="f-arial"
                     >Giới thiệu</router-link
                   >
                 </li>
 
-                <li>
-                  <router-link to="/do-nuong" class="f-arial"
-                    >Thực đơn nướng</router-link
-                  >
+                <!-- Mục Danh mục có menu con -->
+                <li class="menu-item">
+                  <a href="#" class="f-arial">Danh mục</a>
+                  <ul class="sub-menu">
+                    <li>
+                      <router-link to="/danh-muc/cham-soc-da" class="f-arial"
+                        >Chăm sóc da</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link to="/danh-muc/trang-diem" class="f-arial"
+                        >Trang điểm</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link to="/danh-muc/nuoc-hoa" class="f-arial"
+                        >Nước hoa</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link
+                        to="/danh-muc/cham-soc-co-the"
+                        class="f-arial"
+                        >Chăm sóc cơ thể</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link to="/danh-muc/cham-soc-toc" class="f-arial"
+                        >Chăm sóc tóc</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link to="/danh-muc/serum-dac-tri" class="f-arial"
+                        >Serum, sản phẩm đặc trị</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link
+                        to="/danh-muc/cham-soc-rang-mieng"
+                        class="f-arial"
+                        >Chăm sóc răng miệng</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link
+                        to="/danh-muc/cham-soc-mat-moi"
+                        class="f-arial"
+                        >Chăm sóc mắt và môi</router-link
+                      >
+                    </li>
+                  </ul>
                 </li>
 
                 <li>
-                  <router-link to="/do-lau" class="f-arial"
-                    >Thực đơn lẩu</router-link
+                  <router-link to="/my-manager-message" class="f-arial"
+                    >Liên hệ trực tuyến</router-link
                   >
                 </li>
-
-                <li>
-                  <router-link to="/mon-an" class="f-arial">Món ăn</router-link>
-                </li>
-                <!-- 
-                <li>
-                  <router-link to="/news" class="f-arial">Tin tức</router-link>
-                </li> -->
               </ul>
             </div>
 
@@ -237,6 +272,7 @@
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { computed } from "vue";
+import config from "@/configs/config";
 
 export default {
   setup() {
@@ -266,6 +302,7 @@ export default {
       totalProductOfCart,
       totalProductOfWishList,
       userLogin,
+      config,
     };
   },
 };
@@ -311,5 +348,72 @@ export default {
 
 .icon-custom:hover {
   color: #717fe0;
+}
+
+/* new */
+.main-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+.main-menu > li {
+  position: relative;
+  margin-right: 20px;
+}
+
+.main-menu > li > a,
+.main-menu > li > router-link {
+  text-decoration: none;
+  padding: 10px 15px;
+  display: block;
+}
+
+.sub-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: 200px;
+  z-index: 999;
+}
+
+.sub-menu li {
+  margin: 0;
+}
+
+.sub-menu li a,
+.sub-menu li router-link {
+  color: #333; /* Màu chữ ban đầu là màu xám nhạt */
+  text-decoration: none;
+  padding: 10px 15px;
+  display: block;
+  transition: background 0.3s, color 0.3s; /* Hiệu ứng chuyển đổi mượt mà */
+}
+
+.sub-menu li:hover {
+  background: #f0f0f0; /* Màu nền xám nhạt khi hover */
+}
+
+.sub-menu li:hover a {
+  color: #007bff; /* Màu chữ xanh nhạt khi hover */
+}
+
+.sub-menu li a {
+  display: flex;
+  align-items: center;
+}
+
+.sub-menu li:hover a {
+  transform: translateX(3px); /* Di chuyển nhẹ chữ khi hover */
+  transition: transform 0.3s; /* Hiệu ứng chuyển động mượt mà */
+}
+.menu-item:hover .sub-menu {
+  display: block;
 }
 </style>

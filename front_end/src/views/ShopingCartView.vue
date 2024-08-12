@@ -22,17 +22,6 @@
                 ></item-list-product-by-shoping>
               </table>
             </div>
-
-            <!-- <div
-              class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm"
-            >
-              <div
-                class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10"
-                @click="handleChangeCart"
-              >
-                Câp nhật giỏ hàng
-              </div>
-            </div> -->
           </div>
         </div>
 
@@ -40,8 +29,6 @@
           <div
             class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm"
           >
-            <!-- <h4 class="mtext-109 cl2 p-b-30">Thông tin giỏ hàng</h4> -->
-
             <div class="flex-w flex-t bor12 p-t-15 p-b-30">
               <div
                 class="size-209 p-r-18 p-r-0-sm w-full-ssm"
@@ -226,7 +213,7 @@ export default {
     const totalPriceCart = computed(() => {
       return formatNumberWithDots(
         listProductOfCart.value.reduce((total, item) => {
-          return total + item.product.price * item.quantity;
+          return total + item.detailProduct.price * item.quantity;
         }, 0)
       );
     });
@@ -235,66 +222,105 @@ export default {
       store.dispatch("cart/setCartAction");
     });
 
-    const handlePaymentCard = async () => {
-      enterIconLoadingPayCard();
-      const processedListProduct = listProductOfCart.value.map((item) => {
-        return {
-          id: item.product.id,
-          productName: item.product.productName,
-          price: item.product.price,
-          quantity: item.quantity,
-        };
-      });
-
-      const data = {
-        listProduct: processedListProduct,
-        username: addressClone.value.username,
-        address: addressClone.value.address,
-        phone: addressClone.value.phone,
-        note: noteOrder.value,
-        paymentMethod: "card",
+    const checkEmtpyField = () => {
+      const originalData = {
+        username: "",
+        address: "",
+        phone: "",
       };
 
-      const result = await createSessionStripe(data);
+      const listKey = Object.keys(addressClone.value);
+      for (let key of listKey) {
+        if (addressClone.value[key].trim("") !== "") {
+          originalData[key] = addressClone.value[key].trim("");
+        }
+      }
+      if (
+        originalData.username?.trim() === "" ||
+        originalData.address?.trim() === "" ||
+        originalData.phone?.trim() === ""
+      ) {
+        displayToast(
+          store.dispatch,
+          typeAlertBox.ERROR,
+          "Vui lòng điền đầy đủ thông tin đặt hàng!"
+        );
 
-      window.location.href = result.url;
+        return false;
+      }
+
+      console.log(addressClone.value);
+      return true;
+    };
+
+    const handlePaymentCard = async () => {
+      if (checkEmtpyField()) {
+        enterIconLoadingPayCard();
+        const processedListProduct = listProductOfCart.value.map((item) => {
+          const productName = item?.detailProduct?.product?.productName;
+          const detailProductName = item?.detailProduct?.content;
+          return {
+            id: item.detailProduct?.id,
+            productName: `${productName} - ${detailProductName}`,
+            price: item.detailProduct?.price,
+            quantity: item.quantity,
+          };
+        });
+
+        const data = {
+          listProduct: processedListProduct,
+          username: addressClone.value.username,
+          address: addressClone.value.address,
+          phone: addressClone.value.phone,
+          note: noteOrder.value,
+          paymentMethod: "card",
+        };
+
+        const result = await createSessionStripe(data);
+
+        window.location.href = result.url;
+      }
     };
 
     const handlePaymentDefault = async () => {
-      enterIconLoadingPayDefault();
-      const processedListProduct = listProductOfCart.value.map((item) => {
-        return {
-          id: item.product.id,
-          productName: item.product.productName,
-          price: item.product.price,
-          quantity: item.quantity,
+      if (checkEmtpyField()) {
+        enterIconLoadingPayDefault();
+        const processedListProduct = listProductOfCart.value.map((item) => {
+          const productName = item?.detailProduct?.product?.productName;
+          const detailProductName = item?.detailProduct?.content;
+          return {
+            id: item.detailProduct?.id,
+            productName: `${productName} - ${detailProductName}`,
+            price: item.detailProduct?.price,
+            quantity: item.quantity,
+          };
+        });
+
+        const data = {
+          listProduct: processedListProduct,
+          username: addressClone.value.username,
+          address: addressClone.value.address,
+          phone: addressClone.value.phone,
+          note: noteOrder.value,
+          paymentMethod: "default",
         };
-      });
 
-      const data = {
-        listProduct: processedListProduct,
-        username: addressClone.value.username,
-        address: addressClone.value.address,
-        phone: addressClone.value.phone,
-        note: noteOrder.value,
-        paymentMethod: "default",
-      };
+        try {
+          await createOrder(data);
+          setTimeout(() => {
+            displayToast(
+              store.dispatch,
+              typeAlertBox.SUCCESS,
+              "Đặt đơn hàng thành công"
+            );
 
-      try {
-        await createOrder(data);
-        setTimeout(() => {
-          displayToast(
-            store.dispatch,
-            typeAlertBox.SUCCESS,
-            "Đặt đơn hàng thành công"
-          );
+            router.push({ name: "home" });
 
-          router.push({ name: "home" });
-
-          store.commit("cart/clearCart");
-        }, 3000);
-      } catch (err) {
-        console.log(err);
+            store.commit("cart/clearCart");
+          }, 3000);
+        } catch (err) {
+          console.log(err);
+        }
       }
     };
 

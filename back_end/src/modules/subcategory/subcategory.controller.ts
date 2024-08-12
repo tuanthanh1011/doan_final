@@ -32,6 +32,11 @@ export class SubcategoryController {
     return this.subcategoryService.findAll(findSubcategoryDto);
   }
 
+  @Get('find-subcate/:id')
+  findAllSubcateByCategoryId(@Param('id') id: string) {
+    return this.subcategoryService.findAllSubcateByCategorySlug(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.subcategoryService.findOne(id);

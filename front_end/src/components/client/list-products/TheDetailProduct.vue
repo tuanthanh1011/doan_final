@@ -13,34 +13,62 @@
     >
       <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
         <button class="how-pos3 hov3 trans-04" @click="handleCloseCartModal">
-          <img src="images/icons/icon-close.png" alt="CLOSE" />
+          <img
+            :src="`${config.MINIO_URL}icons/icon-close.png`"
+            alt="CLOSE"
+            style="
+              padding: 4px;
+              color: #000;
+              background: #ccc;
+              border-radius: 25px;
+            "
+          />
         </button>
 
         <div class="row" style="height: 60%">
-          <div class="col-md-6 col-lg-7 p-b-30">
+          <div
+            class="col-md-6 col-lg-7 p-b-30"
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding: 0 62px;
+            "
+          >
             <div class="p-l-25 p-r-30 p-lr-0-lg">
               <div class="wrap-slick3 flex-sb flex-w">
                 <div class="wrap-slick3-dots"></div>
                 <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-                <div class="slick3 gallery-lb">
+                <div class="gallery-lb">
                   <div
                     class="item-slick3"
                     data-thumb="images/product-detail-01.jpg"
                   >
                     <div class="wrap-pic-w pos-relative">
-                      <img
-                        :src="fullImageUrl"
-                        alt="IMG-PRODUCT"
-                        style="height: 44vh"
-                      />
+                      <img :src="fullImageUrl" alt="IMG-PRODUCT" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-l-25 p-r-30 p-lr-0-lg">
+              <div
+                class="wrap-slick3 flex-sb flex-w"
+                style="padding: 30px 0 0 0"
+              >
+                <b>Mô tả:</b>
+                <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-                      <!-- <a
-                        class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                        href="images/product-detail-01.jpg"
-                      >
-                        <i class="fa fa-expand"></i>
-                      </a> -->
+                <div class="gallery-lb">
+                  <div
+                    class="item-slick3"
+                    data-thumb="images/product-detail-01.jpg"
+                  >
+                    <div class="wrap-pic-w pos-relative">
+                      <div>
+                        {{ detailProduct.description }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -72,6 +100,10 @@
               <p class="stext-102 cl3 p-t-23" v-if="detailProduct.subcategory">
                 Số lượng trong kho:
                 {{ currentQuantity }}
+              </p>
+
+              <p class="stext-102 cl3 p-t-23">
+                Đã bán: {{ detailProduct.totalSold }} sản phẩm
               </p>
 
               <p class="stext-102 cl3 p-t-23">
@@ -276,9 +308,10 @@ export default {
       }
 
       try {
-        const numberProduct = ref(1)
+        const numberProduct = ref(1);
         infoChangeNumberProduct.value?.forEach((item) => {
-          if (item.id === idSelectedOption.value) numberProduct.value = item.currentQuantity;
+          if (item.id === idSelectedOption.value)
+            numberProduct.value = item.currentQuantity;
         });
 
         await createACart({
@@ -293,7 +326,11 @@ export default {
         );
         store.dispatch("cart/setCartAction");
       } catch (err) {
-        console.error(err);
+        displayToast(
+          store.dispatch,
+          typeAlertBox.ERROR,
+          err.response.data.message
+        );
       }
     };
 
@@ -310,6 +347,7 @@ export default {
       isLogin,
       currentQuantity,
       idSelectedOption,
+      config,
     };
   },
 };
