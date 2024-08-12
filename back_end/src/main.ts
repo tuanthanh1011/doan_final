@@ -10,7 +10,7 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: 'http://localhost:8080',
+    origin: ['http://localhost:8080', 'http://152.42.216.222:8080'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });

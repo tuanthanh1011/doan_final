@@ -77,7 +77,7 @@ export default {
     const id = computed(() => props.id);
     const store = useStore();
 
-    const socket = io("http://localhost:80", {
+    const socket = io(`${config.SOCKET_URL}`, {
       withCredentials: true,
       auth: {
         jwt: localStorage.getItem("accessToken"),
