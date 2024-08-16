@@ -186,6 +186,7 @@
                     cancel-text="Hủy bỏ"
                     :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
                     :contentWrapperStyle="{ boxShadow: 'none' }"
+                    v-if="productSelected.productId === record.productId"
                   >
                     <a-form
                       ref="formRefEdit"
@@ -193,161 +194,372 @@
                       layout="vertical"
                       name="form_in_modal_edit"
                     >
-                      <a-form-item
-                        name="productNameEdit"
-                        label="Tên sản phẩm"
-                        class="form-item"
-                        :rules="[
-                          {
-                            required: true,
-                            message: 'Tên sản phẩm không được để trống!',
-                          },
-                        ]"
-                      >
-                        <a-input
-                          v-model:value="productSelected.productNameEdit"
-                        />
-                      </a-form-item>
-
-                      <a-form-item
-                        name="detailProductName"
-                        label="Chọn option sản phẩm"
-                        class="form-item"
-                        :rules="[
-                          {
-                            required: true,
-                            validator: customValidatorRadioButton,
-                            trigger: 'change',
-                          },
-                        ]"
-                      >
-                        <a-radio-group v-model:value="selectedOption">
-                          <div
-                            class="option"
-                            v-for="(
-                              item, index
-                            ) in productSelected.detailProducts"
-                            :key="index"
-                            :class="{
-                              'option-disabled': item.quantity === 0,
-                            }"
+                      <a-row :gutter="16">
+                        <a-col :span="12">
+                          <a-form-item
+                            name="productNameEdit"
+                            label="Tên sản phẩm"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Tên sản phẩm không được để trống!',
+                              },
+                            ]"
                           >
-                            <a-radio
-                              style="padding: 8px 0"
-                              :value="item.content"
-                              :disabled="item.quantity === 0"
-                              @change="handleOptionChange(item)"
+                            <a-input
+                              v-model:value="productSelected.productNameEdit"
+                            />
+                          </a-form-item>
+                        </a-col>
+
+                        <a-col :span="12">
+                          <a-form-item
+                            name="trademark"
+                            label="Thương hiệu"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Thương hiệu không được để trống!',
+                              },
+                            ]"
+                          >
+                            <a-input
+                              v-model:value="productSelected.trademark"
+                            />
+                          </a-form-item>
+                        </a-col>
+                      </a-row>
+
+                      <a-row :gutter="16">
+                        <a-col :span="12">
+                          <a-form-item
+                            name="detailName"
+                            label="Đề mục options"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Đề mục options không được để trống!',
+                              },
+                            ]"
+                          >
+                            <a-input
+                              v-model:value="productSelected.detailName"
+                            />
+                          </a-form-item>
+                        </a-col>
+                      </a-row>
+
+                      <a-row :gutter="16">
+                        <a-col :span="12">
+                          <a-form-item
+                            name="detailProductName"
+                            label="Chọn option sản phẩm"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                validator: customValidatorRadioButton,
+                                trigger: 'change',
+                              },
+                            ]"
+                          >
+                            <a-radio-group v-model:value="selectedOption">
+                              <div
+                                class="option"
+                                v-for="(
+                                  item, index
+                                ) in productSelected.detailProducts"
+                                :key="index"
+                              >
+                                <a-radio
+                                  style="padding: 8px 0"
+                                  :value="item.content"
+                                  @change="handleOptionChange(item)"
+                                >
+                                  {{ item.content }}
+                                </a-radio>
+                              </div>
+                            </a-radio-group>
+                          </a-form-item>
+                        </a-col>
+
+                        <a-col :span="12">
+                          <a-form-item
+                            name="content"
+                            label="Tên option"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Tên option không được để trống!',
+                              },
+                            ]"
+                          >
+                            <a-input v-model:value="productSelected.content" />
+                          </a-form-item>
+                        </a-col>
+                      </a-row>
+
+                      <a-row :gutter="16">
+                        <a-col :span="12">
+                          <a-form-item
+                            label="Giá sản phẩm"
+                            name="priceEdit"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Giá sản phẩm không được để trống!',
+                              },
+                              {
+                                validator: (rule, value, callback) => {
+                                  if (isNaN(value)) {
+                                    callback(
+                                      new Error('Giá sản phẩm phải là một số!')
+                                    );
+                                  } else {
+                                    callback();
+                                  }
+                                },
+                              },
+                            ]"
+                          >
+                            <a-input
+                              v-model:value="productSelected.priceEdit"
+                            />
+                          </a-form-item>
+                        </a-col>
+
+                        <a-col :span="12">
+                          <a-form-item
+                            label="Số lượng trong kho"
+                            name="quantity"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message:
+                                  'Số lượng sản phẩm trong kho không được để trống!',
+                              },
+                              {
+                                validator: (rule, value, callback) => {
+                                  if (isNaN(value)) {
+                                    callback(
+                                      new Error(
+                                        'Số lượng sản phẩm trong kho phải là một số!'
+                                      )
+                                    );
+                                  } else {
+                                    callback();
+                                  }
+                                },
+                              },
+                            ]"
+                          >
+                            <a-input v-model:value="productSelected.quantity" />
+                          </a-form-item>
+                        </a-col>
+                      </a-row>
+
+                      <a-row :gutter="16">
+                        <a-col :span="12">
+                          <a-form-item
+                            label="Trạng thái"
+                            name="isActive"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Trạng thái chưa được chọn!',
+                              },
+                            ]"
+                          >
+                            <a-switch
+                              v-model:checked="productSelected.isActive"
+                            />
+                          </a-form-item>
+                        </a-col>
+
+                        <a-col :span="12">
+                          <a-form-item
+                            name="subcategoryEdit"
+                            label="Danh mục"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Danh mục là bắt buộc!',
+                              },
+                            ]"
+                          >
+                            <a-select
+                              v-model:value="productSelected.subcategoryEdit"
+                              placeholder="Chọn danh mục"
+                              allowClear
                             >
-                              {{ item.content }}
-                            </a-radio>
-                          </div>
-                        </a-radio-group>
-                      </a-form-item>
+                              <a-select-option
+                                v-for="category in categories"
+                                :key="category.id"
+                                :value="category.id"
+                              >
+                                {{ category.subCategoryName }}
+                              </a-select-option>
+                            </a-select>
+                          </a-form-item>
+                        </a-col>
+                      </a-row>
 
-                      <a-form-item
-                        label="Giá sản phẩm"
-                        name="priceEdit"
-                        class="form-item"
-                        :rules="[
-                          {
-                            required: true,
-                            message: 'Giá sản phẩm không được để trống!',
-                          },
-                          {
-                            validator: (rule, value, callback) => {
-                              if (isNaN(value)) {
-                                console.log(value);
-                                callback(
-                                  new Error('Giá sản phẩm phải là một số!')
-                                );
-                              } else {
-                                callback();
-                              }
-                            },
-                          },
-                        ]"
-                      >
-                        <a-input v-model:value="productSelected.priceEdit" />
-                      </a-form-item>
-
-                      <a-form-item
-                        label="Trạng thái"
-                        name="isActive"
-                        class="form-item"
-                        :rules="[
-                          {
-                            required: true,
-                            message: 'Trạng thái chưa được chọn!',
-                          },
-                        ]"
-                      >
-                        <a-switch v-model:checked="productSelected.isActive" />
-                      </a-form-item>
-
-                      <a-form-item
-                        name="subcategoryEdit"
-                        label="Danh mục"
-                        :rules="[
-                          {
-                            required: true,
-                            message: 'Danh mục là bắt buộc!',
-                          },
-                        ]"
-                      >
-                        <a-select
-                          v-model:value="productSelected.subcategoryEdit"
-                          placeholder="Chọn danh mục"
-                          allowClear
-                        >
-                          <a-select-option
-                            v-for="category in categories"
-                            :key="category.id"
-                            :value="category.id"
+                      <a-row :gutter="16">
+                        <a-col :span="12">
+                          <a-form-item
+                            name="imageEdit"
+                            label="Ảnh sản phẩm"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Ảnh sản phẩm là bắt buộc!',
+                              },
+                            ]"
                           >
-                            {{ category.subCategoryName }}
-                          </a-select-option>
-                        </a-select>
-                      </a-form-item>
+                            <img
+                              v-if="productSelected.imageEdit"
+                              :src="
+                                `${config.MINIO_URL}` +
+                                productSelected.imageEdit
+                              "
+                              alt="avatar"
+                              style="
+                                width: 20%;
+                                margin-top: 8px;
+                                border-radius: 4px;
+                              "
+                            />
+                            <br />
+                            <div style="margin-top: 8px"></div>
+                            <a-upload
+                              v-model:file-list="fileList"
+                              :before-upload="beforeUpload"
+                              list-type="picture"
+                              :max-count="1"
+                            >
+                              <a-button>
+                                <upload-outlined></upload-outlined>
+                                Tải ảnh lên
+                              </a-button>
+                            </a-upload>
+                          </a-form-item>
+                        </a-col>
 
-                      <a-form-item
-                        name="imageEdit"
-                        label="Ảnh sản phẩm"
-                        :rules="[
-                          {
-                            required: true,
-                            message: 'Ảnh sản phẩm là bắt buộc!',
-                          },
-                        ]"
-                      >
-                        <img
-                          v-if="productSelected.imageEdit"
-                          :src="
-                            `${config.MINIO_URL}` + productSelected.imageEdit
-                          "
-                          alt="avatar"
-                          style="
-                            width: 20%;
-                            margin-top: 8px;
-                            border-radius: 4px;
-                          "
-                        />
-                        <br />
-                        <div style="margin-top: 8px"></div>
-                        <a-upload
-                          v-model:file-list="fileList"
-                          :before-upload="beforeUpload"
-                          list-type="picture"
-                          :max-count="1"
-                        >
-                          <a-button>
-                            <upload-outlined></upload-outlined>
-                            Tải ảnh lên
-                          </a-button>
-                        </a-upload>
-                      </a-form-item>
+                        <a-col :span="12">
+                          <a-form-item
+                            name="description"
+                            label="Mô tả"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Mô tả không được để trống!',
+                              },
+                            ]"
+                          >
+                            <a-textarea
+                              v-model:value="productSelected.description"
+                            />
+                          </a-form-item>
+                        </a-col>
+                      </a-row>
                     </a-form>
                   </a-modal>
                   <!-- Kết thúc xử lý sửa -->
+
+                  <!-- Xử lý thay đổi danh sách options -->
+                  <a-button
+                    @click="handleGetProductDetail(record.productId, true)"
+                    class="m-04"
+                  >
+                    <EllipsisOutlined />
+                  </a-button>
+
+                  <a-modal
+                    v-model:open="openMore"
+                    title="Danh sách option"
+                    @ok="handleSubmitChangeListOptions(record.productId)"
+                    ok-text="Cập nhật"
+                    cancel-text="Hủy bỏ"
+                    :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
+                    :contentWrapperStyle="{ boxShadow: 'none' }"
+                    v-if="productSelected.productId === record.productId"
+                  >
+                    <a-list
+                      item-layout="horizontal"
+                      :data-source="productSelected.detailProducts"
+                    >
+                      <template #renderItem="{ item }">
+                        <a-list-item>
+                          <a-list-item-meta>
+                            <template #title>
+                              {{ item.content }}
+                            </template>
+                            <template #description>
+                              <span class="price-text"
+                                >Giá:
+                                {{ formatNumberWithDots(item.price) }} VND</span
+                              >
+                            </template>
+                          </a-list-item-meta>
+                        </a-list-item>
+                      </template>
+                    </a-list>
+                    <a-form
+                      ref="formRefListOptions"
+                      name="dynamic_form_nest_item"
+                      :model="dynamicValidateForm"
+                      @finish="onFinish"
+                      class="ml-4"
+                    >
+                      <a-space
+                        v-for="(option, index) in dynamicValidateForm.options"
+                        :key="option.id"
+                        style="display: flex; margin-bottom: 8px"
+                        align="baseline"
+                      >
+                        <a-form-item
+                          :name="['options', index, 'content']"
+                          :rules="{
+                            required: true,
+                            message: 'Trường này không được để trống!',
+                          }"
+                        >
+                          <a-input
+                            v-model:value="option.content"
+                            placeholder="Tên option"
+                          />
+                        </a-form-item>
+                        <a-form-item
+                          :name="['options', index, 'price']"
+                          :rules="{
+                            required: true,
+                            message: 'Trường này không được để trống!',
+                          }"
+                        >
+                          <a-input
+                            v-model:value="option.price"
+                            placeholder="Giá"
+                          />
+                        </a-form-item>
+                        <MinusCircleOutlined @click="removeOption(option)" />
+                      </a-space>
+                      <a-form-item>
+                        <a-button type="dashed" block @click="addUser">
+                          <PlusOutlined />
+                          Thêm mới option
+                        </a-button>
+                      </a-form-item>
+                    </a-form>
+                  </a-modal>
+                  <!-- Kết thúc xử lý thay đổi danh sách options -->
                 </a>
               </template>
             </template>
@@ -379,6 +591,8 @@ import {
   EditOutlined,
   SearchOutlined,
   DeleteOutlined,
+  EllipsisOutlined,
+  MinusCircleOutlined,
 } from "@ant-design/icons-vue";
 import {
   createAProduct,
@@ -600,47 +814,59 @@ function handleSizeChange(newPerPage) {
 }
 
 const selectedOption = ref(null);
-const detailProductSelected = ref({});
 
 // Xử lý sửa bản ghi
 const formRefEdit = ref();
 const open = ref(false);
-const size = ref("default");
+// const size = ref("default");
 const productSelected = reactive({
   productNameEdit: "",
   priceEdit: "",
   imageEdit: "",
   subcategoryEdit: "",
-  quantity: 0,
+  quantity: "",
+  trademark: "",
+  description: "",
+  detailProductId: "",
 });
-const showDrawer = (val) => {
-  size.value = val;
-  open.value = true;
-};
+
 const onClose = () => {
   open.value = false;
 };
 
 const handleOptionChange = (item) => {
   selectedOption.value = item.content;
-  detailProductSelected.value = item;
-  productSelected.priceEdit = detailProductSelected.value.price;
+
+  productSelected.priceEdit = item.price;
+  productSelected.quantity = item.quantity;
+  productSelected.content = item.content;
+  productSelected.detailProductId = item.id;
 };
 
-const handleGetProductDetail = async (productId) => {
-  fileList.value = [];
-  showDrawer("default");
+const handleGetProductDetail = async (productId, isHandleListOptions) => {
+  setLoading(true);
+
   try {
     const result = await getDetailProduct(productId);
     productSelected.productId = productId;
     productSelected.productNameEdit = result.productName;
-    productSelected.priceEdit = result.price;
     productSelected.imageEdit = result.image;
     productSelected.subcategoryEdit = result.subcategory.id;
     productSelected.isActive = result.isActive;
     productSelected.detailProducts = result.detailProducts;
+    productSelected.trademark = result.trademark;
+    productSelected.description = result.description;
+    productSelected.detailName = result.detailName;
+    if (isHandleListOptions) {
+      openMore.value = true;
+    } else {
+      fileList.value = [];
+      open.value = true;
+    }
   } catch (err) {
     console.log(err);
+  } finally {
+    setLoading(false);
   }
 };
 
@@ -656,10 +882,16 @@ const handleSubmitChangeProduct = async () => {
     await formRefEdit.value.validateFields();
     const data = {
       productName: productSelected.productNameEdit,
+      price: +productSelected.priceEdit,
       image: productSelected.imageEdit,
-      price: productSelected.priceEdit,
-      isActive: productSelected.isActive,
       subcategory: productSelected.subcategoryEdit,
+      quantity: +productSelected.quantity,
+      trademark: productSelected.trademark,
+      description: productSelected.description,
+      detailProductId: productSelected.detailProductId,
+      content: productSelected.content,
+      detailName: productSelected.detailName,
+      isActive: productSelected.isActive,
     };
     await updateAProduct(productSelected.productId, data);
     message.success("Cập nhật sản phẩm thành công");
@@ -701,6 +933,38 @@ const showConfirm = (productId) => {
     okText: "Xác nhận",
     cancelText: "Hủy bỏ",
   });
+};
+
+// Xử lý thay đổi danh sách options
+const openMore = ref(false);
+
+const formRefListOptions = ref();
+const dynamicValidateForm = reactive({
+  options: [],
+});
+const removeOption = (item) => {
+  const index = dynamicValidateForm.options.indexOf(item);
+  if (index !== -1) {
+    dynamicValidateForm.options.splice(index, 1);
+  }
+};
+const addUser = () => {
+  dynamicValidateForm.options.push({
+    content: "",
+    price: "",
+    id: Date.now(),
+  });
+};
+
+const handleSubmitChangeListOptions = async (productId) => {
+  try {
+    formRefListOptions.value.validateFields();
+    openMore.value = false
+    console.log(dynamicValidateForm)
+    console.log("Product ID:", JSON.stringify(productId));
+  } catch (error) {
+    console.error("Validation failed:", error);
+  }
 };
 </script>
 

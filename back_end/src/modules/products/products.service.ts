@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,7 +14,7 @@ import { FindProductsDto } from './dto/list-product.dto';
 import { SubcategoryService } from '../subcategory/subcategory.service';
 import { MinioClientService } from '../minio-client/minio-client.service';
 import { BucketName } from 'src/constans/enum';
-import { ProductReview } from '../product_review/entities/product_review.entity';
+import { DetailProductService } from '../detail-product/detail-product.service';
 
 @Injectable()
 export class ProductsService {
@@ -21,6 +23,8 @@ export class ProductsService {
     private productsRepository: Repository<Products>,
     private readonly subcategoryService: SubcategoryService,
     private readonly minioClientService: MinioClientService,
+    @Inject(forwardRef(() => DetailProductService))
+    private readonly detailProductService: DetailProductService,
   ) {}
   async create(createProductDto: CreateProductDto) {
     const {
@@ -272,14 +276,18 @@ export class ProductsService {
 
   async update(id: string, updateProductDto: UpdateProductDto) {
     const {
-      image,
+      content,
       productName,
+      price,
+      detailProductId,
       subcategory,
+      image,
       isActive,
       description,
       trademark,
       detailName,
       increaseTotalSold,
+      quantity,
     } = updateProductDto;
 
     const product = await this.productsRepository.findOneBy({
@@ -287,7 +295,7 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new NotFoundException('Không tìm thấy món ăn phù hợp');
+      throw new NotFoundException('Không tìm thấy sản phẩm phù hợp');
     }
 
     if (subcategory) {
@@ -297,6 +305,18 @@ export class ProductsService {
         throw new NotFoundException('Không tìm thấy danh mục phù hợp');
       }
       product.subcategory = subcategoryInstance;
+    }
+
+    let updatedDetailProduct
+    if (detailProductId) {
+      updatedDetailProduct = this.detailProductService.update(
+        {
+          quantity,
+          price,
+          content,
+        },
+        detailProductId,
+      );
     }
 
     if (image) {
@@ -327,7 +347,10 @@ export class ProductsService {
       product.totalSold = (product.totalSold || 0) + increaseTotalSold;
     }
 
-    await this.productsRepository.save(product);
+    await Promise.all([
+      updatedDetailProduct,
+      this.productsRepository.save(product)
+    ])
 
     return product;
   }

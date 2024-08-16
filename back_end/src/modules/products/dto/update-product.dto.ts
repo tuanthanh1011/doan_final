@@ -3,7 +3,19 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 export class UpdateProductDto {
   @IsString()
   @IsOptional()
+  content: string;
+
+  @IsString()
+  @IsOptional()
   productName: string;
+
+  @IsNumber()
+  @IsOptional()
+  price: number;
+
+  @IsString()
+  @IsOptional()
+  detailProductId: string;
 
   @IsString()
   @IsOptional()
@@ -32,4 +44,8 @@ export class UpdateProductDto {
   @IsNumber()
   @IsOptional()
   increaseTotalSold: number;
+
+  @IsNumber()
+  @IsOptional()
+  quantity: number;
 }

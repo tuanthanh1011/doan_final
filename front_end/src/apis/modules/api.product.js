@@ -7,8 +7,8 @@ export const getAllProduct = async (params) => {
 };
 
 export const getDetailProduct = async (id) => {
-  return await axiosAPI.get(`products/${id}`);
-};
+  return axiosAPI.get(`products/${id}`);
+}
 
 export const uploadImageProduct = async (data) => {
   return await axiosAPI.post("/products/upload-image", data, {
