@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDetailProductDto } from './dto/create-detail-product.dto';
 import { UpdateDetailProductDto } from './dto/update-detail-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,13 +21,21 @@ export class DetailProductService {
   ) {}
 
   async create(createDetailProductDto: CreateDetailProductDto) {
-    const { product } = createDetailProductDto;
+    const { product, options } = createDetailProductDto;
     await this.productsService.findProductById(product);
-    const create: DetailProduct = this.detailProductRepository.create(
-      createDetailProductDto,
-    );
 
-    return await this.detailProductRepository.save(create);
+    options.map(async (option: any) => {
+      const { price, content } = option;
+      const create: DetailProduct = this.detailProductRepository.create({
+        price,
+        content,
+      });
+      await this.detailProductRepository.save(create);
+    });
+
+    return {
+      success: 'true',
+    };
   }
 
   async findDetailProductById(id: string) {
@@ -35,34 +48,33 @@ export class DetailProductService {
     return product;
   }
 
-  async update (updateDetailProductDto: UpdateDetailProductDto, id: string) {
-    const { quantity, price, content } = updateDetailProductDto
+  async update(updateDetailProductDto: UpdateDetailProductDto, id: string) {
+    const { quantity, price, content } = updateDetailProductDto;
 
     const detailProduct = await this.detailProductRepository.findOneBy({
-      id: id
-    })
-    
+      id: id,
+    });
+
     if (!detailProduct) {
       throw new NotFoundException('Không tìm thấy chi tiết sản phẩm phù hợp');
     }
 
     if (quantity) {
-      detailProduct.quantity = quantity
+      detailProduct.quantity = quantity;
     }
 
     if (price) {
-      detailProduct.price = price
+      detailProduct.price = price;
     }
 
     if (content) {
-      detailProduct.content = content
+      detailProduct.content = content;
     }
 
-    await this.detailProductRepository.save(detailProduct)
+    await this.detailProductRepository.save(detailProduct);
 
-    return detailProduct
+    return detailProduct;
   }
-
 
   // findAll() {
   //   return `This action returns all detailProduct`;

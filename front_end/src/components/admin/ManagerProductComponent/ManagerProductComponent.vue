@@ -960,7 +960,7 @@ const handleSubmitChangeListOptions = async (productId) => {
   try {
     formRefListOptions.value.validateFields();
     openMore.value = false
-    console.log(dynamicValidateForm)
+    console.log(dynamicValidateForm.options)
     console.log("Product ID:", JSON.stringify(productId));
   } catch (error) {
     console.error("Validation failed:", error);
