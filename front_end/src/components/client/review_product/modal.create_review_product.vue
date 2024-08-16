@@ -101,7 +101,7 @@ const handleOk = async () => {
       displayToast(
         store.dispatch,
         typeAlertBox.SUCCESS,
-        "Đánh giá món ăn thành công"
+        "Đánh giá sản phẩm thành công"
       );
     } catch (err) {
       displayToast(

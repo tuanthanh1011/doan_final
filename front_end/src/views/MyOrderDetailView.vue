@@ -43,7 +43,7 @@
               </div>
             </div>
           </div>
-          <span style="margin-left: 20px; font-style: italic; font-size: 12px">Lưu ý: Khách hàng có thể thực hiện đánh giá các món ăn sau khi giao hàng thành công</span>
+          <span style="margin-left: 20px; font-style: italic; font-size: 12px">Lưu ý: Khách hàng có thể thực hiện đánh giá sản phẩm sau khi giao hàng thành công</span>
         </article>
 
         <div class="track" v-if="orderDetail.status && orderDetail.status !== 'Đã hủy'">
@@ -101,12 +101,12 @@
           </li>
         </ul>
         <hr />
-        <a href="#" class="btn btn-primary" data-abc="true">
-          <i class="fa fa-chevron-left"></i>
+        <div class="btn btn-primary" data-abc="true" style="cursor: pointer">
           <router-link to="/order-history/" style="color: white; margin-left: 8px">
+                    <i class="fa fa-chevron-left"></i>
             Trở lại trang trước
           </router-link>
-        </a>
+        </div>
       </div>
     </article>
 

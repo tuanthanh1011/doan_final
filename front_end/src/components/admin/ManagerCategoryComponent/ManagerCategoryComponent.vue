@@ -46,10 +46,10 @@
               font-weight: 600;
             "
           >
-            Danh sách món ăn
+            Danh sách sản phẩm
           </a-label>
 
-          <!-- Thêm mới món ăn -->
+          <!-- Thêm mới sản phẩm -->
           <div>
             <a-button type="primary" @click="visible = true">
               <PlusOutlined /> Thêm mới
@@ -488,7 +488,7 @@ const showConfirm = (productId) => {
   Modal.confirm({
     title: "Xác nhận xóa bản ghi",
     icon: createVNode(ExclamationCircleOutlined),
-    content: "Bạn có chắc chắn muốn xóa món ăn không?",
+    content: "Bạn có chắc chắn muốn xóa sản phẩm không?",
     onOk() {
       handleDelete(productId);
     },

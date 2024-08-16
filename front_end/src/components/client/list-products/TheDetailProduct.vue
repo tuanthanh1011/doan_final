@@ -82,10 +82,32 @@
                 {{ detailProduct.productName }}
               </h4>
 
-              <p v-if="idSelectedOption === ''">
+              <p class="stext-102 cl3 p-t-23" style="font-size: 13px">
+                <a-rate
+                  style="font-size: 14px"
+                  disabled
+                  :value="detailProduct.rateAvg"
+                />
+                <span style="margin: 0 4px"> | </span>
+                {{ detailProduct.rateTotal }} Đánh Giá
+                <span style="margin: 0 4px"> | </span>
+                {{ detailProduct.totalSold }} Đã Bán
+              </p>
+
+              <p
+                v-if="idSelectedOption === ''"
+                class="stext-102 cl3 p-t-23"
+                style="color: #ee4d2d; font-weight: 500"
+              >
                 Giá thành: {{ processedPrice }}<br />
               </p>
-              <p v-else>Giá thành: {{ currentPrice }}<br /></p>
+              <p
+                v-else
+                class="stext-102 cl3 p-t-23"
+                style="color: #ee4d2d; font-weight: 500"
+              >
+                Giá thành: {{ currentPrice }}<br />
+              </p>
 
               <p class="stext-102 cl3 p-t-23" v-if="detailProduct.subcategory">
                 Thương hiệu:
@@ -100,15 +122,6 @@
               <p class="stext-102 cl3 p-t-23" v-if="detailProduct.subcategory">
                 Số lượng trong kho:
                 {{ currentQuantity }}
-              </p>
-
-              <p class="stext-102 cl3 p-t-23">
-                Đã bán: {{ detailProduct.totalSold }} sản phẩm
-              </p>
-
-              <p class="stext-102 cl3 p-t-23">
-                Đánh giá ({{ detailProduct.rateTotal }}):
-                <a-rate disabled :value="detailProduct.rateAvg" />
               </p>
 
               <div class="stext-102 cl3 p-t-23">
@@ -281,7 +294,16 @@ export default {
     const handleChangeNumberProduct = (number) => {
       if (!idSelectedOption.value) return;
       const newQuantity = numberProduct.value + number;
-      if (newQuantity > currentQuantity.value || newQuantity < 1) return;
+      if (newQuantity > currentQuantity.value) {
+        displayToast(
+          store.dispatch,
+          typeAlertBox.ERROR,
+          "Số lượng yêu cầu vượt quá số lượng trong kho!"
+        );
+        return;
+      } else if (newQuantity < 1) {
+        return;
+      }
 
       numberProduct.value = newQuantity;
       infoChangeNumberProduct.value?.forEach((item) => {

@@ -94,30 +94,6 @@
                 </a-form-item>
 
                 <a-form-item
-                  name="role"
-                  label="Quyền tài khoản"
-                  :rules="[
-                    {
-                      required: true,
-                      message: 'Quyền tài khoản là bắt buộc!',
-                    },
-                  ]"
-                >
-                  <a-select
-                    v-model:value="formState.role"
-                    placeholder="Chọn quyền"
-                    allowClear
-                  >
-                    <a-select-option key="USER" value="USER">
-                      USER
-                    </a-select-option>
-                    <a-select-option key="EMPLOYEE" value="EMPLOYEE">
-                      EMPLOYEE
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-
-                <a-form-item
                   name="password"
                   label="Mật khẩu"
                   :rules="[
@@ -201,30 +177,6 @@
                         ]"
                       >
                         <a-input v-model:value="userDetailCurrent.emailEdit" />
-                      </a-form-item>
-
-                      <a-form-item
-                        name="roleEdit"
-                        label="Quyền tài khoản"
-                        :rules="[
-                          {
-                            required: true,
-                            message: 'Quyền tài khoản là bắt buộc!',
-                          },
-                        ]"
-                      >
-                        <a-select
-                          v-model:value="userDetailCurrent.roleEdit"
-                          placeholder="Chọn quyền"
-                          allowClear
-                        >
-                          <a-select-option key="USER" value="USER">
-                            USER
-                          </a-select-option>
-                          <a-select-option key="EMPLOYEE" value="EMPLOYEE">
-                            EMPLOYEE
-                          </a-select-option>
-                        </a-select>
                       </a-form-item>
                     </a-form>
                   </a-modal>
@@ -331,13 +283,6 @@ const columns = ref([
     key: "email",
     width: 30,
     sorter: (a, b) => a.email.localeCompare(b.email),
-  },
-  {
-    title: "Quyền tài khoản",
-    dataIndex: "role",
-    key: "role",
-    width: 30,
-    sorter: (a, b) => a.role.localeCompare(b.role),
   },
   {
     title: "Thời gian tạo",

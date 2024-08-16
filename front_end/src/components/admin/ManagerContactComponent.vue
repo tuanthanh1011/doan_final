@@ -1,7 +1,5 @@
 <template>
   <div style="flex-grow: 1">
-    <a-layout-header style="background: #fff; padding: 0; height: 20px">
-    </a-layout-header>
     <a-layout-content style="margin: 0 16px">
       <div class="form-container">
         <a-form>
@@ -44,11 +42,17 @@
             <a
               href="#"
               class="list-group-item list-group-item-action border-0"
-              style="border-bottom: 1px solid #ccc"
+              style="
+                border-bottom: 1px solid #ccc;
+                padding: 20px;
+                border-radius: 4px;
+              "
               v-for="(conversation, index) in listConversations"
               :key="index"
               @click="changeConversation(conversation)"
-              :class="{ await_confirm: conversation.staffId == null }"
+              :class="{
+                confirm_conversation: conversation.id == conversationCurrent.id,
+              }"
             >
               <!-- Modal confirm support -->
               <!-- <a-modal
@@ -79,12 +83,29 @@
                   style="position: relative; width: 100%"
                 >
                   <div>
-                    {{ conversation.customerId.username }}
+                    <span style="font-weight: 600">
+                      {{ conversation.customerId.username }}
+                    </span>
                     <div class="small">
-                      <span class="fas fa-circle chat-online"></span> Online
+                      <span
+                        :class="conversation.isActive ? 'active' : 'closed'"
+                      >
+                        {{
+                          conversation.isActive == true
+                            ? "Đang hoạt động"
+                            : "Đã đóng"
+                        }}
+                      </span>
                     </div>
                   </div>
-                  <div style="position: absolute; right: 0; font-size: 12px">
+                  <div
+                    style="
+                      position: absolute;
+                      right: 0;
+                      font-size: 12px;
+                      font-weight: 600;
+                    "
+                  >
                     {{ formatDate(conversation.lastActivity) }}
                   </div>
                 </div>
@@ -103,18 +124,20 @@
               class="position-relative"
               v-if="Object.keys(conversationCurrent).length !== 0"
             >
-              <a-button
-                v-if="conversationCurrent.isActive == true"
-                type="primary"
-                @click="handleCloseConversation"
-              >
-                Đóng phiên hiện tại
-              </a-button>
               <div
                 ref="chatMessagesRef"
                 class="chat-messages p-4"
                 style="height: 70vh"
               >
+                <div style="text-align: end; margin-bottom: 8px">
+                  <a-button
+                    v-if="conversationCurrent.isActive == true"
+                    type="primary"
+                    @click="handleCloseConversation"
+                  >
+                    Đóng phiên hiện tại
+                  </a-button>
+                </div>
                 <div
                   v-for="(message, index) in messages"
                   :key="index"
@@ -202,6 +225,8 @@ export default {
     const chatMessagesRef = ref(null); // Ref cho chat-messages
     const disableInput = ref(true);
     const selectedConversation = ref(null);
+    const searchValue = ref("");
+    const backupListConversation = ref([]);
 
     const socket = io("http://localhost:80", {
       withCredentials: true,
@@ -222,7 +247,17 @@ export default {
         conversationId: conversationCurrent.value.id,
       });
       message.success("Đóng phiên thành công");
-      conversationCurrent.value = [];
+
+      listConversations.value = listConversations.value.map((conversation) => {
+        if (conversation.id === conversationCurrent.value.id) {
+          conversation.isActive = false;
+        }
+
+        return conversation;
+      });
+
+      conversationCurrent.value = {};
+      backupListConversation.value = listConversations.value;
     };
 
     // Kết hợp xử lý xác nhận vào cuộc trò chuyện
@@ -245,6 +280,7 @@ export default {
     const fetchAllConversation = () => {
       socket.emit("fetchAllConversation", (conversations) => {
         listConversations.value = conversations;
+        backupListConversation.value = conversations;
       });
     };
 
@@ -300,6 +336,23 @@ export default {
       scrollToBottom(); // Cuộn xuống cuối khi gửi tin nhắn mới
     };
 
+    // Xử lý tìm kiếm theo tên khách hàng
+    function handleSearch() {
+      listConversations.value = backupListConversation.value;
+
+      listConversations.value = listConversations.value.filter(
+        (conversation) => {
+          const username = conversation.customerId.username.toLowerCase();
+          const search = searchValue.value.toLowerCase();
+          return username.includes(search);
+        }
+      );
+    }
+
+    const resetData = () => {
+      listConversations.value = backupListConversation.value;
+    };
+
     const scrollToBottom = () => {
       nextTick(() => {
         if (chatMessagesRef.value) {
@@ -335,6 +388,9 @@ export default {
       formatDate,
       handleCloseConversation,
       config,
+      handleSearch,
+      searchValue,
+      resetData,
     };
   },
 };
@@ -344,12 +400,16 @@ body {
   margin-top: 20px;
 }
 
-.chat-online {
-  color: #34ce57;
+.active {
+  color: green;
 }
 
-.chat-offline {
-  color: #e4606d;
+.closed {
+  color: red;
+}
+
+.confirm_conversation {
+  background-color: #cdcdcd;
 }
 
 .chat-messages {

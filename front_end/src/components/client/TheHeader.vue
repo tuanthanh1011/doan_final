@@ -177,8 +177,29 @@
 
             <!-- Icon header -->
             <div class="wrap-icon-header flex-w flex-r-m">
-              <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11">
+              <div
+                class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search"
+                @click="toggleSearchModal"
+              >
                 <i class="zmdi zmdi-search"></i>
+              </div>
+
+              <div
+                id="search-modal"
+                :class="{ active: isSearchModalActive }"
+                class="search-modal"
+                @click.self="closeSearchModal"
+              >
+                <div class="search-modal-content">
+                  <input
+                    type="text"
+                    v-model="searchQuery"
+                    placeholder="Nhập tên sản phẩm..."
+                  />
+                  <button @click="performSearch" style="border-radius: 8px">
+                    Tìm kiếm
+                  </button>
+                </div>
               </div>
 
               <div
@@ -213,10 +234,28 @@
 
       <!-- Icon header -->
       <div class="wrap-icon-header flex-w flex-r-m m-r-15">
-        <div
-          class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search"
-        >
-          <i class="zmdi zmdi-search"></i>
+        <div>
+          <div
+            class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search"
+            @click="toggleSearchModal"
+          >
+            <i class="zmdi zmdi-search"></i>
+          </div>
+
+          <div
+            id="search-modal"
+            :class="{ active: isSearchModalActive }"
+            class="search-modal"
+          >
+            <div class="search-modal-content">
+              <input
+                type="text"
+                v-model="searchQuery"
+                placeholder="Enter your search..."
+              />
+              <button @click="performSearch">Search</button>
+            </div>
+          </div>
         </div>
 
         <div
@@ -271,7 +310,7 @@
 <script>
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import config from "@/configs/config";
 
 export default {
@@ -280,6 +319,8 @@ export default {
     const router = useRouter();
     const isLogin = computed(() => store.state.auth.isLogin);
     const userLogin = computed(() => store.state.auth.userLogin);
+    const searchQuery = ref("");
+    const isSearchModalActive = ref(false);
 
     const totalProductOfCart = computed(
       () => store.state.cart.totalProductOfCart
@@ -288,6 +329,19 @@ export default {
     const totalProductOfWishList = computed(
       () => store.state.wishList.totalProductOfWishList
     );
+
+    const toggleSearchModal = () => {
+      isSearchModalActive.value = !isSearchModalActive.value;
+    };
+
+    const performSearch = () => {
+      toggleSearchModal();
+      router.push({ name: "search-product", query: { search: searchQuery.value } });
+    };
+
+    const closeSearchModal = () => {
+      isSearchModalActive.value = false;
+    };
 
     store.dispatch("cart/setCartAction");
     store.dispatch("wishList/setWishListAction");
@@ -303,6 +357,11 @@ export default {
       totalProductOfWishList,
       userLogin,
       config,
+      toggleSearchModal,
+      closeSearchModal,
+      performSearch,
+      searchQuery,
+      isSearchModalActive,
     };
   },
 };
@@ -415,5 +474,47 @@ export default {
 }
 .menu-item:hover .sub-menu {
   display: block;
+}
+
+.search-modal {
+  position: fixed;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  transition: top 0.5s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.search-modal.active {
+  top: 0%;
+}
+
+.search-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 500px;
+  height: 150px;
+}
+
+.search-modal-content input {
+  padding: 10px;
+  width: 100%;
+  height: 40%;
+  margin-bottom: 10px;
+}
+
+.search-modal-content button {
+  padding: 10px 20px;
+  background-color: #717fe0;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 </style>

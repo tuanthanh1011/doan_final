@@ -7,6 +7,7 @@ import NotFound from "../views/NotFoundView.vue";
 import AboutView from "../views/AboutView.vue";
 import ContactView from "../views/ContactView.vue";
 import Category_Product from "../views/Category_Product.vue";
+import SearchProductView from "../views/SearchProductView.vue";
 import ShopingCart from "../views/ShopingCartView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import MyOrderView from "../views/MyOrderView.vue";
@@ -68,6 +69,12 @@ const routes = [
     path: "/about",
     name: "about",
     component: AboutView,
+    meta: { requiresAuth: false, roleAdmin: false },
+  },
+  {
+    path: "/search-product",
+    name: "search-product",
+    component: SearchProductView,
     meta: { requiresAuth: false, roleAdmin: false },
   },
   {

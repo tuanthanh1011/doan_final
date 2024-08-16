@@ -59,140 +59,137 @@
           >
             <template #bodyCell="{ record, column }">
               <template v-if="column.key === 'operation'">
-                <a>
-                  <!-- Xử lý sửa -->
-                  <a-button
-                    @click="handleGetOderDetail(record.orderId)"
-                    class="m-04"
-                  >
-                    <EditOutlined />
-                  </a-button>
-                  <a-modal
-                    v-model:open="open"
-                    title="Thông tin đơn hàng"
-                    @ok="handleSubmitChangeStatus"
-                    ok-text="Cập nhật trạng thái đơn hàng"
-                    cancel-text="Hủy bỏ"
-                  >
-                    <template #extra>
-                      <a-button style="margin-right: 8px" @click="onClose"
-                        >Hủy bỏ</a-button
-                      >
-                      <a-button
-                        type="primary"
-                        @click="handleSubmitChangeStatus()"
-                        >Cập nhật trạng thái đơn hàng</a-button
-                      >
-                    </template>
-                    <a-form :model="formState">
-                      <a-form-item>
-                        <template #label>
-                          <span class="bold-label">Mã đơn hàng</span>
+                <!-- Xử lý sửa -->
+                <a-button
+                  @click="handleGetOderDetail(record.orderId)"
+                  class="m-04"
+                >
+                  <EditOutlined />
+                </a-button>
+                <a-modal
+                  v-model:open="open"
+                  title="Thông tin đơn hàng"
+                  @ok="handleSubmitChangeStatus"
+                  ok-text="Cập nhật trạng thái đơn hàng"
+                  cancel-text="Hủy bỏ"
+                  :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }"
+                >
+                  <template #extra>
+                    <a-button style="margin-right: 8px" @click="onClose"
+                      >Hủy bỏ</a-button
+                    >
+                    <a-button type="primary" @click="handleSubmitChangeStatus()"
+                      >Cập nhật trạng thái đơn hàng</a-button
+                    >
+                  </template>
+                  <a-form :model="formState">
+                    <a-form-item>
+                      <template #label>
+                        <span class="bold-label">Mã đơn hàng</span>
+                      </template>
+                      <p class="fs-14">{{ orderDetailCurrent.id }}</p>
+                    </a-form-item>
+                    <a-form-item>
+                      <template #label>
+                        <span class="bold-label">Trạng thái đơn hàng</span>
+                      </template>
+                      <a-dropdown>
+                        <template #overlay>
+                          <a-menu @click="handleMenuClick">
+                            <a-menu-item key="1">
+                              <UserOutlined />
+                              Chờ xác nhận
+                            </a-menu-item>
+                            <a-menu-item key="2">
+                              <UserOutlined />
+                              Đã xác nhận
+                            </a-menu-item>
+                            <a-menu-item key="3">
+                              <UserOutlined />
+                              Đang giao hàng
+                            </a-menu-item>
+                            <a-menu-item key="4">
+                              <UserOutlined />
+                              Giao hàng thành công
+                            </a-menu-item>
+                            <a-menu-item key="5">
+                              <UserOutlined />
+                              Giao hàng thất bại
+                            </a-menu-item>
+                            <a-menu-item key="6">
+                              <UserOutlined />
+                              Đã hủy
+                            </a-menu-item>
+                          </a-menu>
                         </template>
-                        <p class="fs-14">{{ orderDetailCurrent.id }}</p>
-                      </a-form-item>
-                      <a-form-item>
-                        <template #label>
-                          <span class="bold-label">Trạng thái đơn hàng</span>
-                        </template>
-                        <a-dropdown>
-                          <template #overlay>
-                            <a-menu @click="handleMenuClick">
-                              <a-menu-item key="1">
-                                <UserOutlined />
-                                Chờ xác nhận
-                              </a-menu-item>
-                              <a-menu-item key="2">
-                                <UserOutlined />
-                                Đã xác nhận
-                              </a-menu-item>
-                              <a-menu-item key="3">
-                                <UserOutlined />
-                                Đang giao hàng
-                              </a-menu-item>
-                              <a-menu-item key="4">
-                                <UserOutlined />
-                                Giao hàng thành công
-                              </a-menu-item>
-                              <a-menu-item key="5">
-                                <UserOutlined />
-                                Giao hàng thất bại
-                              </a-menu-item>
-                              <a-menu-item key="6">
-                                <UserOutlined />
-                                Đã hủy
-                              </a-menu-item>
-                            </a-menu>
+                        <a-button>
+                          {{ statusOrderCurrent }}
+                          <DownOutlined />
+                        </a-button>
+                      </a-dropdown>
+                    </a-form-item>
+
+                    <a-form-item>
+                      <template #label>
+                        <span class="bold-label">Thông tin nhận hàng</span>
+                      </template>
+                      <p class="fs-14">{{ orderDetailCurrent.username }}</p>
+                      <p class="fs-14">{{ orderDetailCurrent.address }}</p>
+                      <p class="fs-14">{{ orderDetailCurrent.phone }}</p>
+                    </a-form-item>
+
+                    <a-form-item>
+                      <template #label>
+                        <span class="bold-label">Hình thức thanh toán</span>
+                      </template>
+                      <p class="fs-14">
+                        {{
+                          orderDetailCurrent.paymentMethod == "default"
+                            ? "Thanh toán khi nhận hàng"
+                            : "Thanh toán trực tuyến"
+                        }}
+                      </p>
+                    </a-form-item>
+
+                    <a-form-item>
+                      <template #label>
+                        <span class="bold-label">Tổng giá trị</span>
+                      </template>
+                      <p class="fs-14">
+                        {{
+                          orderDetailCurrent && orderDetailCurrent.totalPrice
+                            ? orderDetailCurrent.totalPrice.toLocaleString(
+                                "vi-VN"
+                              )
+                            : "0"
+                        }}
+                        đ
+                      </p></a-form-item
+                    >
+
+                    <span class="bold-label">Danh sách sản phẩm</span>
+                    <a-form-item style="margin-top: 8px">
+                      <a-table
+                        :columns="columnsListProduct"
+                        :data-source="dataListProduct"
+                        :pagination="false"
+                      >
+                        <template #bodyCell="{ column }">
+                          <template v-if="column.key === 'operation'">
+                            <a>action</a>
                           </template>
-                          <a-button>
-                            {{ statusOrderCurrent }}
-                            <DownOutlined />
-                          </a-button>
-                        </a-dropdown>
-                      </a-form-item>
-
-                      <a-form-item>
-                        <template #label>
-                          <span class="bold-label">Thông tin nhận hàng</span>
                         </template>
-                        <p class="fs-14">{{ orderDetailCurrent.username }}</p>
-                        <p class="fs-14">{{ orderDetailCurrent.address }}</p>
-                        <p class="fs-14">{{ orderDetailCurrent.phone }}</p>
-                      </a-form-item>
-
-                      <a-form-item>
-                        <template #label>
-                          <span class="bold-label">Hình thức thanh toán</span>
-                        </template>
-                        <p class="fs-14">
-                          {{
-                            orderDetailCurrent.paymentMethod == "default"
-                              ? "Thanh toán khi nhận hàng"
-                              : "Thanh toán trực tuyến"
-                          }}
-                        </p>
-                      </a-form-item>
-
-                      <a-form-item>
-                        <template #label>
-                          <span class="bold-label">Tổng giá trị</span>
-                        </template>
-                        <p class="fs-14">
-                          {{
-                            orderDetailCurrent && orderDetailCurrent.totalPrice
-                              ? orderDetailCurrent.totalPrice.toLocaleString(
-                                  "vi-VN"
-                                )
-                              : "0"
-                          }}
-                          đ
-                        </p></a-form-item
-                      >
-
-                      <span class="bold-label">Danh sách món ăn</span>
-                      <a-form-item style="margin-top: 8px">
-                        <a-table
-                          :columns="columnsListProduct"
-                          :data-source="dataListProduct"
-                          :pagination="false"
-                        >
-                          <template #bodyCell="{ column }">
-                            <template v-if="column.key === 'operation'">
-                              <a>action</a>
-                            </template>
-                          </template>
-                        </a-table>
-                      </a-form-item>
-                      <a-form-item
-                        label="Ghi chú"
-                        v-if="orderDetailCurrent.note !== ''"
-                      >
-                        <p class="fs-14">{{ orderDetailCurrent.note }}</p>
-                      </a-form-item>
-                    </a-form>
-                  </a-modal>
-                  <!-- Kết thúc xử lý sửa -->
-                </a>
+                      </a-table>
+                    </a-form-item>
+                    <a-form-item
+                      label="Ghi chú"
+                      v-if="orderDetailCurrent.note !== ''"
+                    >
+                      <p class="fs-14">{{ orderDetailCurrent.note }}</p>
+                    </a-form-item>
+                  </a-form>
+                </a-modal>
+                <!-- Kết thúc xử lý sửa -->
               </template>
             </template>
           </a-table>
@@ -379,7 +376,7 @@ const orderDetailCurrent = ref({});
 
 const columnsListProduct = [
   {
-    title: "Tên món ăn",
+    title: "Tên sản phẩm",
     width: 50,
     dataIndex: "name",
     key: "name",
@@ -460,6 +457,9 @@ const handleSubmitChangeStatus = async () => {
 </script>
 
 <style scoped>
+.ant-modal-mask {
+  background-color: none !important;
+}
 #components-layout-demo-side .logo {
   height: 32px;
   margin: 16px;

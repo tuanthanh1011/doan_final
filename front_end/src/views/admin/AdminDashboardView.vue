@@ -38,7 +38,9 @@
             class="fa-solid fa-utensils"
             style="margin-left: 8px; margin-right: 10px; font-size: 12px"
           ></i>
-          <router-link to="/admin/manager-product">Bảo trì món ăn</router-link>
+          <router-link to="/admin/manager-product"
+            >Bảo trì sản phẩm</router-link
+          >
         </a-menu-item>
 
         <a-menu-item key="4" v-if="userLogin.role === 'ADMIN'">
