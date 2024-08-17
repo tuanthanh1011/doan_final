@@ -28,8 +28,8 @@ import { FileValidationPipe } from 'src/pipe/validation.pipe';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  // @UseGuards(JwtAuthGuard)
-  // @Roles('ADMIN')
+  @UseGuards(JwtAuthGuard)
+  @Roles('ADMIN')
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);

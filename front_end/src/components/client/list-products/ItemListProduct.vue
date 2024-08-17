@@ -15,17 +15,22 @@
 
       <div class="block2-txt flex-w flex-t p-t-14">
         <div class="block2-txt-child1 flex-col-l">
-          <a
-            href="product-detail.html"
-            class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6"
-          >
+          <span class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
             {{ product.productName }}
-          </a>
+          </span>
 
-          <span class="stext-105 cl3" style="width: 100%">
+          <span style="width: 100%">
             <div style="display: flex; justify-content: space-between">
-              <p>{{ processedPrice }}</p>
-              <p style="font-size: 12px">{{ product.totalSold }} đã bán</p>
+              <p style="font-size: 14px">{{ processedPrice }}</p>
+              <div
+                class="d-flex"
+                style="font-size: 12px; color: rgb(238, 77, 45; align-items: center"
+              >
+                <p style="font-size: 12px; margin-right: 2px">
+                  {{ product.totalSold }} đã bán
+                </p>
+                <p style="font-size: 12px">{{ product.rateTotal }} đánh giá</p>
+              </div>
             </div>
           </span>
         </div>

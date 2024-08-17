@@ -144,6 +144,7 @@
                     cancel-text="Hủy bỏ"
                     :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
                     :contentWrapperStyle="{ boxShadow: 'none' }"
+                    v-if="record.subCategoryId === subcategoryDetailCurrent.id"
                   >
                     <a-form
                       ref="formRefEdit"

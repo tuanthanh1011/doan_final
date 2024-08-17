@@ -96,6 +96,9 @@
                 <span class="text-muted">
                   Giá: {{ item.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") }} đ
                 </span>
+                 <p class="title" style="font-size: 12px; color: orange; font-style: italic">
+                  {{ listProductReviewed.includes(item.detailProduct.id) == true ? "Đã đánh giá, nhấn để xem": null}} <br />
+                </p>
               </div>
             </figure>
           </li>
@@ -125,6 +128,7 @@ import config from "@/configs/config"
 import displayToast from '@/utils/handleToast';
 import { useStore } from 'vuex';
 import { typeAlertBox } from "@/constants/enum";
+import { isReviewedAPI } from '@/apis/modules/api.product_review';
 
 export default {
   components: {
@@ -140,12 +144,27 @@ export default {
       delivery: false,
       delivered: false,
     });
+    let listProductReviewed = ref([])
 
     const orderId = route.params.id;
     const reviewModal = ref(null);
 
     const fetchData = async () => {
       orderDetail.value = await getOrderByOrderId(orderId);
+
+      const listProductId = orderDetail.value.listProduct.map((item) => item.detailProduct?.id)
+
+      const promises = listProductId.map((productId) => {
+        return isReviewedAPI({
+          productId: productId,
+          orderId: orderId,
+        });
+      })
+
+      const result = await Promise.all(promises)
+      listProductReviewed.value = result.map((item) => 
+        item?.product?.id ? item?.product?.id : null
+      )
 
       switch (orderDetail.value.status) {
         case TypeOrder.CONFIRMED:
@@ -216,7 +235,8 @@ export default {
       handleChangeReview,
       reviewModal,
       handleDelete,
-      config
+      config,
+      listProductReviewed
     };
   }
 };

@@ -192,6 +192,8 @@ export class OrderService {
       this.orderDetailService.findOneByOrderId(id),
     ]);
 
+    console.log(orderDetail);
+
     const beforeStatus = order.status;
 
     if (!order) {
@@ -212,6 +214,10 @@ export class OrderService {
             item.detailProduct?.product?.id,
             {
               increaseTotalSold: item.quantity as number,
+              quantity: (item.detailProduct.quantity as number) - item.quantity,
+              price: item.detailProduct.price,
+              content: item.detailProduct.content,
+              detailProductId: item.detailProduct.id,
             } as UpdateProductDto,
           );
         }),
@@ -228,6 +234,10 @@ export class OrderService {
             item.detailProduct?.product?.id,
             {
               increaseTotalSold: (item.quantity as number) * -1,
+              quantity: (item.detailProduct.quantity as number) + item.quantity,
+              price: item.detailProduct.price,
+              content: item.detailProduct.content,
+              detailProductId: item.detailProduct.id,
             } as UpdateProductDto,
           );
         }),
@@ -307,7 +317,7 @@ export class OrderService {
       throw new BadRequestException('Đơn hàng đã được hủy');
     } else {
       throw new BadRequestException(
-        'Đơn hàng đã được chấp nhận. Vui lòng liên hệ quản trị viên',
+        'Không thể hủy đơn hàng. Vui lòng liên hệ quản trị viên!',
       );
     }
   }
@@ -326,7 +336,7 @@ export class OrderService {
       throw new BadRequestException('Đơn hàng đã được hủy');
     } else {
       throw new BadRequestException(
-        'Đơn hàng đã được chấp nhận. Vui lòng liên hệ quản trị viên',
+        'Không thể hủy đơn hàng. Vui lòng liên hệ quản trị viên!',
       );
     }
   }
@@ -345,7 +355,7 @@ export class OrderService {
       throw new BadRequestException('Đơn hàng đã được hủy');
     } else {
       throw new BadRequestException(
-        'Đơn hàng đã được chấp nhận. Vui lòng liên hệ quản trị viên',
+        'Không thể hủy đơn hàng. Vui lòng liên hệ quản trị viên!',
       );
     }
   }

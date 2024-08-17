@@ -257,6 +257,7 @@ export default {
       if (checkEmtpyField()) {
         enterIconLoadingPayCard();
         const processedListProduct = listProductOfCart.value.map((item) => {
+          console.log(item);
           const productName = item?.detailProduct?.product?.productName;
           const detailProductName = item?.detailProduct?.content;
           return {
@@ -264,6 +265,7 @@ export default {
             productName: `${productName} - ${detailProductName}`,
             price: item.detailProduct?.price,
             quantity: item.quantity,
+            image: item.detailProduct?.product?.image,
           };
         });
 

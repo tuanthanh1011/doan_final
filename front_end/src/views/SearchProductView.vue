@@ -11,23 +11,10 @@
         </h4>
       </div>
 
-      <div class="flex-w flex-sb-m p-b-52">
-        <div class="flex-w flex-l-m m-tb-10">
-          <button
-            v-for="(item, index) in listSubcate"
-            :key="index"
-            class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-            @click="
-              addParam({
-                subCategory: item.slug,
-                subCategoryName: item.subCategoryName,
-              })
-            "
-          >
-            {{ item.subCategoryName }}
-          </button>
-        </div>
-
+      <div
+        class="flex-w flex-sb-m p-b-52"
+        v-show="listProduct && listProduct.length > 0"
+      >
         <div class="flex-w flex-c-m m-tb-10">
           <div
             style="min-width: 140px"
@@ -150,7 +137,16 @@
         </div>
       </div>
 
-      <list-product :listProduct="listProduct"></list-product>
+      <list-product
+        :listProduct="listProduct"
+        v-if="listProduct && listProduct.length > 0"
+      ></list-product>
+
+      <template style="display: block">
+        <div>
+          <a-empty v-if="true" description="Không tìm thấy kết quả phù hợp!" />
+        </div>
+      </template>
 
       <a-pagination
         v-model:current="page"
@@ -159,6 +155,7 @@
         :showSizeChanger="false"
         style="text-align: center; margin-top: 18px"
         @change="onChange"
+        v-if="listProduct && listProduct.length > 0"
       />
     </div>
   </section>

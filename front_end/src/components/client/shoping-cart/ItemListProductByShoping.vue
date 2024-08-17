@@ -89,7 +89,7 @@ export default {
         displayToast(
           store.dispatch,
           typeAlertBox.ERROR,
-          "Số lượng yêu cầu vượt quá số lượng trong kho!"
+          "Vượt quá số lượng trong kho!"
         );
         return;
       }

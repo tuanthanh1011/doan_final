@@ -18,7 +18,7 @@
     </a-modal>
 
     <a-modal
-      v-else
+      v-if="isReviewed == true"
       v-model:open="open"
       title="Đánh giá sản phảm"
       cancel-text="Hủy bỏ"
@@ -67,7 +67,7 @@ const showModal = async (data) => {
 
   try {
     const result = await isReviewedAPI({
-      productId: metadata.value.productSelected.product.id,
+      productId: metadata.value.productSelected.detailProduct.id,
       orderId: metadata.value.orderId,
     });
 
@@ -92,7 +92,7 @@ const handleOk = async () => {
 
     try {
       createProductReview({
-        productId: metadata.value.productSelected.product.id,
+        productId: metadata.value.productSelected.detailProduct.id,
         orderId: metadata.value.orderId,
         rate: rate.value,
         content: rateContent.value,
@@ -107,7 +107,7 @@ const handleOk = async () => {
       displayToast(
         store.dispatch,
         typeAlertBox.ERROR,
-        err.response.data.message || "Yêu cầu không hợp lệ"
+        err.response?.data?.message || "Yêu cầu không hợp lệ"
       );
     }
     rateContent.value = "";

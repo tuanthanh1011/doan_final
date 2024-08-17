@@ -30,8 +30,8 @@ export class OrderDetailService {
   async findOneByOrderId(orderId: string) {
     const query = this.orderDetailRepository
       .createQueryBuilder('order_detail')
-      .innerJoinAndSelect('order_detail.detailProduct', 'detail-product')
-      .innerJoinAndSelect('detail-product.product', 'products')
+      .innerJoinAndSelect('order_detail.detailProduct', 'detail_product')
+      .innerJoinAndSelect('detail_product.product', 'products')
       .where('order_detail.orderId = :orderId', { orderId });
 
     return query.getMany();
@@ -40,8 +40,8 @@ export class OrderDetailService {
   async isProductBelongOrder(productId, orderId) {
     const products = await this.orderDetailRepository
       .createQueryBuilder('order_detail')
-      .where('order_detail.order = :orderId', { orderId })
-      .andWhere('order_detail.product = :productId', { productId })
+      .where('order_detail.orderId = :orderId', { orderId })
+      .andWhere('order_detail.productId = :productId', { productId })
       .getMany();
 
     if (products.length == 0) {

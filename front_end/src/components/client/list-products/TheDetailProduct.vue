@@ -89,10 +89,73 @@
                   :value="detailProduct.rateAvg"
                 />
                 <span style="margin: 0 4px"> | </span>
-                {{ detailProduct.rateTotal }} Đánh Giá
-                <span style="margin: 0 4px"> | </span>
                 {{ detailProduct.totalSold }} Đã Bán
+                <span style="margin: 0 4px"> | </span>
+                {{ detailProduct.rateTotal }} Đánh Giá
               </p>
+
+              <div>
+                <a-button
+                  @click="showModal(detailProduct.id)"
+                  style="margin-top: 8px"
+                  >Danh sách đánh giá</a-button
+                >
+                <a-modal
+                  v-model:open="isModalVisible"
+                  @cancel="handleCancel"
+                  title="Danh sách đánh giá"
+                  ok-text="Cập nhật"
+                  cancel-text="Hủy bỏ"
+                  class="custom-modal"
+                  :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
+                  :contentWrapperStyle="{ boxShadow: 'none' }"
+                  zIndex="100000"
+                  :footer="null"
+                  v-if="detailProduct.id === detailProductReviewId"
+                >
+                  <div
+                    style="height: 500px; overflow-y: scroll"
+                    v-if="reviews && reviews.length > 0"
+                  >
+                    <div
+                      v-for="review in reviews"
+                      :key="review.username"
+                      class="review-item"
+                    >
+                      <div class="review-content">
+                        <div class="header">
+                          <span class="username">{{ review.username }}</span>
+                          <a-rate
+                            style="font-size: 14px"
+                            disabled
+                            :value="review.rate"
+                          />
+                        </div>
+                        <div class="details">
+                          <p class="product-name">
+                            {{ review.productName }}
+                          </p>
+                          <p class="content">{{ review.content }}</p>
+                          <p class="created-at">
+                            {{ formatDate(review.createdAt) }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="!reviews || reviews.length == 0"
+                    style="
+                      display: flex;
+                      align-items: center;
+                      flex-direction: column;
+                    "
+                  >
+                    <a-empty description="Chưa có đánh giá!" />
+                  </div>
+                </a-modal>
+              </div>
 
               <p
                 v-if="idSelectedOption === ''"
@@ -102,7 +165,7 @@
                 Giá thành: {{ processedPrice }}<br />
               </p>
               <p
-                v-else
+                v-if="idSelectedOption !== ''"
                 class="stext-102 cl3 p-t-23"
                 style="color: #ee4d2d; font-weight: 500"
               >
@@ -202,6 +265,7 @@ import config from "@/configs/config";
 import { useStore } from "vuex";
 import displayToast from "@/utils/handleToast";
 import { typeAlertBox } from "@/constants/enum";
+import { getReviewByProduct } from "@/apis/modules/api.product_review";
 export default {
   props: {
     isOpen: {
@@ -233,6 +297,31 @@ export default {
     const numberProduct = ref(0);
     const currentPrice = ref("0đ");
 
+    const isModalVisible = ref(false);
+    const reviews = ref([]);
+    const detailProductReviewId = ref("");
+
+    const showModal = async (detailProductId) => {
+      detailProductReviewId.value = detailProductId;
+      isModalVisible.value = true;
+      const response = await getReviewByProduct(detailProductReviewId.value);
+      console.log(response);
+      reviews.value = response.map((item) => {
+        return {
+          productName: `${item.product?.product?.productName} - ${item.product?.content}`,
+          rate: item.rate,
+          content: item.content,
+          createdAt: item.createdAt,
+          username: item?.user.username,
+          avatar: item.user?.avatar,
+        };
+      });
+    };
+
+    const handleCancel = () => {
+      isModalVisible.value = false;
+    };
+
     const fullImageUrl = computed(
       () => `${config.MINIO_URL}${detailProduct.value.image}`
     );
@@ -249,6 +338,10 @@ export default {
             lastPrice
           )}đ`;
     });
+
+    const formatDate = (date) => {
+      return new Date(date).toLocaleDateString();
+    };
 
     const processedStatus = computed(() => {
       const detailProducts = detailProduct.value.detailProducts || [];
@@ -298,7 +391,7 @@ export default {
         displayToast(
           store.dispatch,
           typeAlertBox.ERROR,
-          "Số lượng yêu cầu vượt quá số lượng trong kho!"
+          "Vượt quá số lượng trong kho!"
         );
         return;
       } else if (newQuantity < 1) {
@@ -370,12 +463,67 @@ export default {
       currentQuantity,
       idSelectedOption,
       config,
+      isModalVisible,
+      showModal,
+      reviews,
+      handleCancel,
+      detailProductReviewId,
+      formatDate,
     };
   },
 };
 </script>
 
 <style scoped>
+.review-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.review-content {
+  flex: 1;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.rate {
+  color: #f39c12;
+}
+
+.details {
+  padding: 5px 0;
+}
+
+.product-name {
+  font-style: italic;
+  font-size: 14px;
+}
+
+.content {
+  margin: 10px 0;
+}
+
+.created-at {
+  color: #888;
+  font-size: 0.9em;
+}
 .product-options {
   background-color: #fff;
   padding: 20px;

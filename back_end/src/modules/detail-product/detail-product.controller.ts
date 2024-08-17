@@ -40,8 +40,10 @@ export class DetailProductController {
   //   return this.detailProductService.update(+id, updateDetailProductDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.detailProductService.remove(+id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Roles('ADMIN')
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.detailProductService.remove(id);
+  }
 }

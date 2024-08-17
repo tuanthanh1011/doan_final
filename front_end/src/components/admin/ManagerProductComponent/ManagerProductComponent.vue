@@ -130,17 +130,56 @@
                 </a-form-item>
 
                 <a-form-item
-                  name="price"
-                  label="Giá sản phẩm"
+                  name="trademark"
+                  label="Thương hiệu sản phẩm"
                   :rules="[
                     {
                       required: true,
-                      message: 'Giá sản phẩm là bắt buộc!',
+                      message: 'Thương hiệu sản phẩm là bắt buộc!',
+                    },
+                  ]"
+                >
+                  <a-input v-model:value="formState.trademark" />
+                </a-form-item>
+
+                <a-form-item
+                  name="detailName"
+                  label="Tên options"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Tên options là bắt buộc!',
+                    },
+                  ]"
+                >
+                  <a-input v-model:value="formState.detailName" />
+                </a-form-item>
+
+                <a-form-item
+                  name="content"
+                  label="Tên option (Mặc định)"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Tên option là bắt buộc!',
+                    },
+                  ]"
+                >
+                  <a-input v-model:value="formState.content" />
+                </a-form-item>
+
+                <a-form-item
+                  name="price"
+                  label="Giá option (Mặc định)"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Giá option là bắt buộc!',
                     },
                     {
                       validator: (rule, value, callback) => {
                         if (isNaN(value)) {
-                          callback(new Error('Giá sản phẩm phải là một số!'));
+                          callback(new Error('Giá option phải là một số!'));
                         } else {
                           callback();
                         }
@@ -149,6 +188,10 @@
                   ]"
                 >
                   <a-input v-model:value="formState.price" />
+                </a-form-item>
+
+                <a-form-item name="description" label="Mô tả sản phẩm">
+                  <a-input v-model:value="formState.description" />
                 </a-form-item>
               </a-form>
             </a-modal>
@@ -187,6 +230,7 @@
                     :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
                     :contentWrapperStyle="{ boxShadow: 'none' }"
                     v-if="productSelected.productId === record.productId"
+                    width="800px"
                   >
                     <a-form
                       ref="formRefEdit"
@@ -195,7 +239,7 @@
                       name="form_in_modal_edit"
                     >
                       <a-row :gutter="16">
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             name="productNameEdit"
                             label="Tên sản phẩm"
@@ -213,7 +257,7 @@
                           </a-form-item>
                         </a-col>
 
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             name="trademark"
                             label="Thương hiệu"
@@ -230,10 +274,7 @@
                             />
                           </a-form-item>
                         </a-col>
-                      </a-row>
-
-                      <a-row :gutter="16">
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             name="detailName"
                             label="Đề mục options"
@@ -253,7 +294,7 @@
                       </a-row>
 
                       <a-row :gutter="16">
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             name="detailProductName"
                             label="Chọn option sản phẩm"
@@ -285,8 +326,10 @@
                             </a-radio-group>
                           </a-form-item>
                         </a-col>
+                      </a-row>
 
-                        <a-col :span="12">
+                      <a-row :gutter="16">
+                        <a-col :span="8">
                           <a-form-item
                             name="content"
                             label="Tên option"
@@ -301,10 +344,7 @@
                             <a-input v-model:value="productSelected.content" />
                           </a-form-item>
                         </a-col>
-                      </a-row>
-
-                      <a-row :gutter="16">
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             label="Giá sản phẩm"
                             name="priceEdit"
@@ -332,8 +372,7 @@
                             />
                           </a-form-item>
                         </a-col>
-
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             label="Số lượng trong kho"
                             name="quantity"
@@ -362,10 +401,7 @@
                             <a-input v-model:value="productSelected.quantity" />
                           </a-form-item>
                         </a-col>
-                      </a-row>
-
-                      <a-row :gutter="16">
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             label="Trạng thái"
                             name="isActive"
@@ -382,8 +418,7 @@
                             />
                           </a-form-item>
                         </a-col>
-
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             name="subcategoryEdit"
                             label="Danh mục"
@@ -412,7 +447,7 @@
                       </a-row>
 
                       <a-row :gutter="16">
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             name="imageEdit"
                             label="Ảnh sản phẩm"
@@ -452,19 +487,14 @@
                           </a-form-item>
                         </a-col>
 
-                        <a-col :span="12">
+                        <a-col :span="8">
                           <a-form-item
                             name="description"
                             label="Mô tả"
                             class="form-item"
-                            :rules="[
-                              {
-                                required: true,
-                                message: 'Mô tả không được để trống!',
-                              },
-                            ]"
                           >
                             <a-textarea
+                              style="height: 100px"
                               v-model:value="productSelected.description"
                             />
                           </a-form-item>
@@ -509,6 +539,9 @@
                               >
                             </template>
                           </a-list-item-meta>
+                          <MinusCircleOutlined
+                            @click="showConfirmDeleteDetailProduct(item.id)"
+                          />
                         </a-list-item>
                       </template>
                     </a-list>
@@ -602,6 +635,11 @@ import {
   updateAProduct,
   uploadImageProduct,
 } from "@/apis/modules/api.product";
+
+import {
+  createDetailProduct,
+  deleteADetailProduct,
+} from "@/apis/modules/api.detail_product";
 import { formatDate } from "@/utils/formatDate";
 import { getAllSubcategory } from "@/apis/modules/api.subcategory";
 
@@ -654,6 +692,7 @@ const onOkAdd = async () => {
     const data = toRaw(formState);
 
     try {
+      data.price = +data.price;
       await createAProduct(data);
       message.success("Thêm sản phẩm thành công");
       formRef.value.resetFields();
@@ -898,6 +937,12 @@ const handleSubmitChangeProduct = async () => {
     fetchData();
     onClose();
     handleEdit();
+
+    // Clear data
+    selectedOption.value = null;
+    productSelected.quantity = null;
+    productSelected.priceEdit = null;
+    productSelected.content = null;
     fileList.value = [];
   } catch (err) {
     console.log(err);
@@ -958,12 +1003,47 @@ const addUser = () => {
 
 const handleSubmitChangeListOptions = async (productId) => {
   try {
-    formRefListOptions.value.validateFields();
-    openMore.value = false
-    console.log(dynamicValidateForm.options)
-    console.log("Product ID:", JSON.stringify(productId));
+    const result = await formRefListOptions.value.validateFields();
+    console.log(result);
+    setLoading(true);
+    await createDetailProduct({
+      options: dynamicValidateForm.options,
+      product: productId,
+    });
+    openMore.value = false;
+    message.success("Cập nhật danh sách options thành công");
+    dynamicValidateForm.options = [];
   } catch (error) {
-    console.error("Validation failed:", error);
+    console.log(error);
+    message.error(error?.response?.data?.message || "Có lỗi xảy ra");
+  } finally {
+    setLoading(false);
+  }
+};
+
+const showConfirmDeleteDetailProduct = (detailProductId) => {
+  Modal.confirm({
+    title: "Xác nhận xóa bản ghi",
+    icon: createVNode(ExclamationCircleOutlined),
+    content: "Bạn có chắc chắn muốn xóa option không?",
+    onOk() {
+      deleteDetailProduct(detailProductId);
+    },
+    onCancel() {},
+    okText: "Xác nhận",
+    cancelText: "Hủy bỏ",
+  });
+};
+
+const deleteDetailProduct = async (detailProductId) => {
+  try {
+    await deleteADetailProduct(detailProductId);
+    message.success("Xóa option thành công");
+    productSelected.detailProducts = productSelected.detailProducts.filter(
+      (item) => item.id !== detailProductId
+    );
+  } catch (error) {
+    console.error("Error:", error);
   }
 };
 </script>

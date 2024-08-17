@@ -156,17 +156,19 @@ export default defineComponent({
     onMounted(async () => {
       await fetchData();
       const userCountUp = new CountUp(
-        activeUsers.value.$el.querySelector(".ant-statistic-content-value"),
+        activeUsers.value?.$el.querySelector(".ant-statistic-content-value"),
         totalAccout.value,
         { separator: "," }
       );
       const companyCountUp = new CountUp(
-        activeCompanies.value.$el.querySelector(".ant-statistic-content-value"),
+        activeCompanies.value?.$el.querySelector(
+          ".ant-statistic-content-value"
+        ),
         totalProduct.value,
         { separator: "," }
       );
       const jobCountUp = new CountUp(
-        activeJobs.value.$el.querySelector(".ant-statistic-content-value"),
+        activeJobs.value?.$el.querySelector(".ant-statistic-content-value"),
         totalOrder.value,
         { separator: "," }
       );

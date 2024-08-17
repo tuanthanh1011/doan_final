@@ -71,12 +71,6 @@ export class Products {
   @OneToMany((type) => Wishlist, (wishlist) => wishlist.product)
   wishList: Wishlist[];
 
-  @OneToMany(
-    (type) => ProductReview,
-    (product_review) => product_review.product,
-  )
-  productReview: ProductReview[];
-
   @CreateDateColumn()
   createdAt: Date;
 

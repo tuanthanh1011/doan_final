@@ -34,6 +34,8 @@ export class ProductsService {
       description,
       trademark,
       detailName,
+      content,
+      price,
     } = createProductDto;
     const subcategoryFind = await this.subcategoryService.findOne(subcategory);
     const create = this.productsRepository.create({
@@ -44,7 +46,18 @@ export class ProductsService {
       detailName,
       subcategory: subcategoryFind,
     });
-    return this.productsRepository.save(create);
+    const product = await this.productsRepository.save(create);
+    await this.detailProductService.create({
+      options: [
+        {
+          price,
+          content,
+        },
+      ],
+      product: product.id,
+    });
+
+    return product;
   }
 
   async findAll(findProductsDto: FindProductsDto) {
@@ -60,11 +73,11 @@ export class ProductsService {
 
     const query = this.productsRepository
       .createQueryBuilder('product')
-      .innerJoinAndSelect('product.subcategory', 'subcategory')
-      .innerJoinAndSelect('subcategory.category', 'category')
-      .innerJoinAndSelect('product.detailProducts', 'detail-product')
+      .leftJoinAndSelect('product.subcategory', 'subcategory')
+      .leftJoinAndSelect('subcategory.category', 'category')
+      .leftJoinAndSelect('product.detailProducts', 'detail-product')
       .where('product.isActive = true')
-      .andWhere('subcategory.isActive');
+      .andWhere('subcategory.isActive = true');
 
     if (search) {
       query.andWhere('product.productName LIKE :search', {
@@ -307,7 +320,7 @@ export class ProductsService {
       product.subcategory = subcategoryInstance;
     }
 
-    let updatedDetailProduct
+    let updatedDetailProduct;
     if (detailProductId) {
       updatedDetailProduct = this.detailProductService.update(
         {
@@ -327,7 +340,7 @@ export class ProductsService {
       product.productName = productName;
     }
 
-    if (isActive) {
+    if (isActive || isActive === false) {
       product.isActive = isActive;
     }
 
@@ -349,8 +362,8 @@ export class ProductsService {
 
     await Promise.all([
       updatedDetailProduct,
-      this.productsRepository.save(product)
-    ])
+      this.productsRepository.save(product),
+    ]);
 
     return product;
   }

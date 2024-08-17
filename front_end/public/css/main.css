@@ -37,10 +37,6 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
 
-html {
-  overflow-y: scroll;
-}
-
 @font-face {
   font-family: Poppins-Regular;
   src: url("../fonts/Poppins/Poppins-Regular.ttf");
@@ -103,6 +99,20 @@ html {
 
 /*------------------------------------------------------------------
 [ Bootstrap ]*/
+
+body::-webkit-scrollbar {
+  display: none; /* Ẩn thanh cuộn */
+}
+
+/* Đảm bảo nội dung vẫn có thể cuộn */
+body {
+  overflow: auto; /* Cho phép cuộn nội dung */
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .container {
   max-width: 1380px;
 }

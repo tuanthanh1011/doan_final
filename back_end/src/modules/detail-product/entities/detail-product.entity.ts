@@ -1,5 +1,6 @@
 import { Cart } from 'src/modules/cart/entities/cart.entity';
 import { OrderDetail } from 'src/modules/order_detail/entities/order_detail.entity';
+import { ProductReview } from 'src/modules/product_review/entities/product_review.entity';
 import { Products } from 'src/modules/products/entities/product.entity';
 import {
   Entity,
@@ -43,6 +44,12 @@ export class DetailProduct {
     (order_detail) => order_detail.detailProduct,
   )
   orderDetail: OrderDetail[];
+
+  @OneToMany(
+    (type) => ProductReview,
+    (product_review) => product_review.product,
+  )
+  productReview: ProductReview[];
 
   @CreateDateColumn()
   createdAt: Date;

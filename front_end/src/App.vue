@@ -23,7 +23,7 @@
   </div>
   <div
     style="display: flex; min-height: 90vh"
-    class="header_admin un_overflow_y"
+    class="header_admin"
     v-if="isAdminRoute === true"
   >
     <div style="margin: 18px 0px"></div>
@@ -67,11 +67,6 @@ export default {
 </script>
 
 <style scoped>
-
-.un_overflow_y {
-  overflow-y: auto !important;
-}
-
 .header_admin {
   position: relative;
 }
@@ -89,7 +84,7 @@ export default {
 
 .header_admin_subnav {
   position: absolute;
-  top: 109%;
+  top: 105%;
   width: 120px;
   background-color: white;
   z-index: 100;

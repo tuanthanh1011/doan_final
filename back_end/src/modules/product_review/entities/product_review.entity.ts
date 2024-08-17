@@ -1,5 +1,5 @@
+import { DetailProduct } from 'src/modules/detail-product/entities/detail-product.entity';
 import { Order } from 'src/modules/order/entities/order.entity';
-import { Products } from 'src/modules/products/entities/product.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   BeforeInsert,
@@ -17,7 +17,7 @@ export class ProductReview {
   @PrimaryColumn()
   id: string;
 
-  @ManyToOne(() => Products, (product) => product.productReview)
+  @ManyToOne(() => DetailProduct, (product) => product.productReview)
   product: string;
 
   @Column()

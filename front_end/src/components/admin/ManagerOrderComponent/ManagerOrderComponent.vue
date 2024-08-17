@@ -73,6 +73,8 @@
                   ok-text="Cập nhật trạng thái đơn hàng"
                   cancel-text="Hủy bỏ"
                   :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }"
+                  v-if="record.orderId === orderDetailCurrent.id"
+                  width="1000px"
                 >
                   <template #extra>
                     <a-button style="margin-right: 8px" @click="onClose"
@@ -82,97 +84,115 @@
                       >Cập nhật trạng thái đơn hàng</a-button
                     >
                   </template>
-                  <a-form :model="formState">
-                    <a-form-item>
-                      <template #label>
-                        <span class="bold-label">Mã đơn hàng</span>
-                      </template>
-                      <p class="fs-14">{{ orderDetailCurrent.id }}</p>
-                    </a-form-item>
-                    <a-form-item>
-                      <template #label>
-                        <span class="bold-label">Trạng thái đơn hàng</span>
-                      </template>
-                      <a-dropdown>
-                        <template #overlay>
-                          <a-menu @click="handleMenuClick">
-                            <a-menu-item key="1">
-                              <UserOutlined />
-                              Chờ xác nhận
-                            </a-menu-item>
-                            <a-menu-item key="2">
-                              <UserOutlined />
-                              Đã xác nhận
-                            </a-menu-item>
-                            <a-menu-item key="3">
-                              <UserOutlined />
-                              Đang giao hàng
-                            </a-menu-item>
-                            <a-menu-item key="4">
-                              <UserOutlined />
-                              Giao hàng thành công
-                            </a-menu-item>
-                            <a-menu-item key="5">
-                              <UserOutlined />
-                              Giao hàng thất bại
-                            </a-menu-item>
-                            <a-menu-item key="6">
-                              <UserOutlined />
-                              Đã hủy
-                            </a-menu-item>
-                          </a-menu>
-                        </template>
-                        <a-button>
-                          {{ statusOrderCurrent }}
-                          <DownOutlined />
-                        </a-button>
-                      </a-dropdown>
-                    </a-form-item>
 
-                    <a-form-item>
-                      <template #label>
-                        <span class="bold-label">Thông tin nhận hàng</span>
-                      </template>
-                      <p class="fs-14">{{ orderDetailCurrent.username }}</p>
-                      <p class="fs-14">{{ orderDetailCurrent.address }}</p>
-                      <p class="fs-14">{{ orderDetailCurrent.phone }}</p>
-                    </a-form-item>
+                  <!-- Chia layout thành 2 cột -->
+                  <div style="display: flex; gap: 16px">
+                    <!-- Cột 1: Thông tin đơn hàng -->
+                    <div style="flex: 1">
+                      <a-form :model="formState">
+                        <a-form-item>
+                          <template #label>
+                            <span class="bold-label">Mã đơn hàng</span>
+                          </template>
+                          <p class="fs-14">{{ orderDetailCurrent.id }}</p>
+                        </a-form-item>
 
-                    <a-form-item>
-                      <template #label>
-                        <span class="bold-label">Hình thức thanh toán</span>
-                      </template>
-                      <p class="fs-14">
-                        {{
-                          orderDetailCurrent.paymentMethod == "default"
-                            ? "Thanh toán khi nhận hàng"
-                            : "Thanh toán trực tuyến"
-                        }}
-                      </p>
-                    </a-form-item>
+                        <a-form-item>
+                          <template #label>
+                            <span class="bold-label">Trạng thái đơn hàng</span>
+                          </template>
+                          <a-dropdown>
+                            <template #overlay>
+                              <a-menu @click="handleMenuClick">
+                                <a-menu-item key="1">
+                                  <UserOutlined />
+                                  Chờ xác nhận
+                                </a-menu-item>
+                                <a-menu-item key="2">
+                                  <UserOutlined />
+                                  Đã xác nhận
+                                </a-menu-item>
+                                <a-menu-item key="3">
+                                  <UserOutlined />
+                                  Đang giao hàng
+                                </a-menu-item>
+                                <a-menu-item key="4">
+                                  <UserOutlined />
+                                  Giao hàng thành công
+                                </a-menu-item>
+                                <a-menu-item key="5">
+                                  <UserOutlined />
+                                  Giao hàng thất bại
+                                </a-menu-item>
+                                <a-menu-item key="6">
+                                  <UserOutlined />
+                                  Đã hủy
+                                </a-menu-item>
+                              </a-menu>
+                            </template>
+                            <a-button>
+                              {{ statusOrderCurrent }}
+                              <DownOutlined />
+                            </a-button>
+                          </a-dropdown>
+                        </a-form-item>
 
-                    <a-form-item>
-                      <template #label>
-                        <span class="bold-label">Tổng giá trị</span>
-                      </template>
-                      <p class="fs-14">
-                        {{
-                          orderDetailCurrent && orderDetailCurrent.totalPrice
-                            ? orderDetailCurrent.totalPrice.toLocaleString(
-                                "vi-VN"
-                              )
-                            : "0"
-                        }}
-                        đ
-                      </p></a-form-item
-                    >
+                        <a-form-item>
+                          <template #label>
+                            <span class="bold-label">Thông tin nhận hàng</span>
+                          </template>
+                          <p class="fs-14">{{ orderDetailCurrent.username }}</p>
+                          <p class="fs-14">{{ orderDetailCurrent.address }}</p>
+                          <p class="fs-14">{{ orderDetailCurrent.phone }}</p>
+                        </a-form-item>
 
-                    <span class="bold-label">Danh sách sản phẩm</span>
-                    <a-form-item style="margin-top: 8px">
+                        <a-form-item>
+                          <template #label>
+                            <span class="bold-label">Hình thức thanh toán</span>
+                          </template>
+                          <p class="fs-14">
+                            {{
+                              orderDetailCurrent.paymentMethod == "default"
+                                ? "Thanh toán khi nhận hàng"
+                                : "Thanh toán trực tuyến"
+                            }}
+                          </p>
+                        </a-form-item>
+
+                        <a-form-item>
+                          <template #label>
+                            <span class="bold-label">Tổng giá trị</span>
+                          </template>
+                          <p class="fs-14">
+                            {{
+                              orderDetailCurrent &&
+                              orderDetailCurrent.totalPrice
+                                ? orderDetailCurrent.totalPrice.toLocaleString(
+                                    "vi-VN"
+                                  )
+                                : "0"
+                            }}
+                            đ
+                          </p>
+                        </a-form-item>
+
+                        <a-form-item
+                          label="Ghi chú"
+                          v-if="orderDetailCurrent.note !== ''"
+                        >
+                          <p class="fs-14">{{ orderDetailCurrent.note }}</p>
+                        </a-form-item>
+                      </a-form>
+                    </div>
+
+                    <!-- Cột 2: Danh sách sản phẩm -->
+                    <div style="flex: 1">
+                      <span class="bold-label">Danh sách sản phẩm</span>
                       <a-table
                         :columns="columnsListProduct"
                         :data-source="dataListProduct"
                         :pagination="false"
+                        style="margin-top: 8px"
                       >
                         <template #bodyCell="{ column }">
                           <template v-if="column.key === 'operation'">
@@ -180,15 +200,10 @@
                           </template>
                         </template>
                       </a-table>
-                    </a-form-item>
-                    <a-form-item
-                      label="Ghi chú"
-                      v-if="orderDetailCurrent.note !== ''"
-                    >
-                      <p class="fs-14">{{ orderDetailCurrent.note }}</p>
-                    </a-form-item>
-                  </a-form>
+                    </div>
+                  </div>
                 </a-modal>
+
                 <!-- Kết thúc xử lý sửa -->
               </template>
             </template>
@@ -225,6 +240,7 @@ import {
 } from "@ant-design/icons-vue";
 import { formatDate } from "@/utils/formatDate";
 import { message } from "ant-design-vue";
+import { formatNumberWithDots } from "@/utils/formatStringNumber";
 
 const formState = reactive({
   productName: "",
@@ -387,6 +403,12 @@ const columnsListProduct = [
     dataIndex: "quantity",
     key: "quantity",
   },
+  {
+    title: "Giá",
+    width: 10,
+    dataIndex: "price",
+    key: "price",
+  },
 ];
 
 const dataListProduct = ref([]);
@@ -400,17 +422,20 @@ const showModal = () => {
 };
 
 const handleGetOderDetail = async (orderId) => {
-  showModal();
   try {
     orderDetailCurrent.value = await getOrderByOrderIdOfAdmin(orderId);
     statusOrderCurrent.value = orderDetailCurrent.value.status;
     dataListProduct.value = orderDetailCurrent.value.listProduct.map(
-      (product) => ({
-        key: product.id,
-        name: product.product.productName,
-        quantity: product.quantity,
+      (item) => ({
+        key: item.id,
+        name:
+          item.detailProduct?.product?.productName +
+          item.detailProduct?.content,
+        quantity: item.quantity,
+        price: formatNumberWithDots(item.detailProduct?.price),
       })
     );
+    showModal();
   } catch (err) {
     console.log(err);
   }

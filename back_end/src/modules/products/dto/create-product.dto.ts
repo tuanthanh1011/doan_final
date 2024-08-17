@@ -28,6 +28,14 @@ export class CreateProductDto {
   description: string;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   detailName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  content: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  price: number;
 }

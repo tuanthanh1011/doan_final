@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -22,20 +23,53 @@ export class DetailProductService {
 
   async create(createDetailProductDto: CreateDetailProductDto) {
     const { product, options } = createDetailProductDto;
+
     await this.productsService.findProductById(product);
 
-    options.map(async (option: any) => {
-      const { price, content } = option;
-      const create: DetailProduct = this.detailProductRepository.create({
-        price,
-        content,
-      });
-      await this.detailProductRepository.save(create);
+    const listDetailProduct = await this.detailProductRepository.find({
+      where: {
+        product: product,
+      },
     });
 
-    return {
-      success: 'true',
-    };
+    const listContent = listDetailProduct.map((item) => item.content);
+    const listContentCheck = [...listContent];
+    let isValid = true;
+
+    const listPromise = [];
+
+    for (let option of options) {
+      const { content } = option;
+      if (listContentCheck.includes(content)) {
+        isValid = false;
+        break;
+      }
+      listContentCheck.push(content);
+    }
+
+    if (isValid) {
+      for (let option of options) {
+        const { price, content } = option;
+        if (listContent.includes(content)) {
+          isValid = false;
+          break;
+        }
+        const create: DetailProduct = this.detailProductRepository.create({
+          price,
+          content,
+          product,
+        });
+        listContent.push(content);
+        listPromise.push(this.detailProductRepository.save(create));
+      }
+
+      await Promise.all(listPromise);
+      return {
+        success: 'true',
+      };
+    } else {
+      throw new BadRequestException('Tên options không được trùng lặp');
+    }
   }
 
   async findDetailProductById(id: string) {
@@ -46,6 +80,15 @@ export class DetailProductService {
     }
 
     return product;
+  }
+
+  async findProductAndDetailProductById(detailProductId: string) {
+    const query = this.detailProductRepository
+      .createQueryBuilder('detail_product')
+      .innerJoinAndSelect('detail_product.product', 'products')
+      .where('detail_product.id = :detailProductId', { detailProductId });
+
+    return query.getOne();
   }
 
   async update(updateDetailProductDto: UpdateDetailProductDto, id: string) {
@@ -59,11 +102,11 @@ export class DetailProductService {
       throw new NotFoundException('Không tìm thấy chi tiết sản phẩm phù hợp');
     }
 
-    if (quantity) {
+    if (quantity || quantity == 0) {
       detailProduct.quantity = quantity;
     }
 
-    if (price) {
+    if (price || price == 0) {
       detailProduct.price = price;
     }
 
@@ -76,19 +119,17 @@ export class DetailProductService {
     return detailProduct;
   }
 
-  // findAll() {
-  //   return `This action returns all detailProduct`;
-  // }
+  async remove(id: string) {
+    const detailProduct = await this.detailProductRepository.findOneBy({
+      id: id,
+    });
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} detailProduct`;
-  // }
+    if (!detailProduct) {
+      throw new NotFoundException('Không tìm thấy option tương ứng');
+    }
 
-  // update(id: number, updateDetailProductDto: UpdateDetailProductDto) {
-  //   return `This action updates a #${id} detailProduct`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} detailProduct`;
-  // }
+    return this.detailProductRepository.delete({
+      id: id,
+    });
+  }
 }

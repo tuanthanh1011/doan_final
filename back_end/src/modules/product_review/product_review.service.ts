@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { OrderService } from '../order/order.service';
 import { OrderDetailService } from '../order_detail/order_detail.service';
 import { ProductsService } from '../products/products.service';
+import { DetailProductService } from '../detail-product/detail-product.service';
 
 @Injectable()
 export class ProductReviewService {
@@ -16,12 +17,13 @@ export class ProductReviewService {
     private readonly orderService: OrderService,
     private readonly orderDetailService: OrderDetailService,
     private readonly productsService: ProductsService,
+    private readonly detailProductService: DetailProductService,
   ) {}
 
   async create(createProductReviewDto: CreateProductReviewDto, userId: string) {
     const { orderId, productId, rate, content } = createProductReviewDto;
     await this.orderService.isOrderSuccessed(orderId);
-    await this.orderDetailService.isProductBelongOrder(productId, orderId);
+    // await this.orderDetailService.isProductBelongOrder(productId, orderId);
 
     const create: ProductReview = this.productReviewRepository.create({
       order: orderId,
@@ -40,7 +42,8 @@ export class ProductReviewService {
   async isReviewed(orderId, productId, userId) {
     const product_review = await this.productReviewRepository
       .createQueryBuilder('product_review')
-      .where('product_review.product = :productId', { productId })
+      .innerJoinAndSelect('product_review.product', 'detail-product')
+      .where('detail-product.id = :productId', { productId })
       .andWhere('product_review.order = :orderId', { orderId })
       .andWhere('product_review.user = :userId', { userId })
       .getOne();
@@ -51,14 +54,23 @@ export class ProductReviewService {
   async findByProduct(productId: string) {
     const query = this.productReviewRepository
       .createQueryBuilder('product_review')
-      .where('product_review.product = :id', {
+      .innerJoinAndSelect('product_review.product', 'detail_product')
+      .innerJoinAndSelect('product_review.user', 'users')
+      .innerJoinAndSelect('detail_product.product', 'products')
+      .where('products.id = :id', {
         id: productId,
       });
 
     return query.getMany();
   }
 
-  async calculateRateAvg(productId: string) {
+  async calculateRateAvg(detailProductId: string) {
+    const detailProduct =
+      await this.detailProductService.findProductAndDetailProductById(
+        detailProductId,
+      );
+
+    const productId = detailProduct.product['id'];
     const reviews = await this.findByProduct(productId);
 
     if (reviews.length === 0) {
@@ -73,7 +85,6 @@ export class ProductReviewService {
       averageRate,
       reviews.length,
     );
-
     return averageRate;
   }
 

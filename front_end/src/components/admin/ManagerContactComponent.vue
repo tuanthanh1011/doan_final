@@ -102,7 +102,7 @@
                     style="
                       position: absolute;
                       right: 0;
-                      font-size: 12px;
+                      font-size: 10px;
                       font-weight: 600;
                     "
                   >

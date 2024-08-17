@@ -11,16 +11,18 @@ import { IUser } from '../users/users.interface';
 import { OrderService } from '../order/order.service';
 import { OrderDetailService } from '../order_detail/order_detail.service';
 import { CartService } from '../cart/cart.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class StripeService {
   private stripe: Stripe;
 
   constructor(
-    private readonly configService: StripeConfigService,
+    private readonly stripeConfigService: StripeConfigService,
     private readonly orderService: OrderService,
+    private readonly configService: ConfigService,
   ) {
-    this.stripe = new Stripe(this.configService.secretKey, {
+    this.stripe = new Stripe(this.stripeConfigService.secretKey, {
       apiVersion: API_VERSION_STRIPE,
     });
   }
@@ -48,13 +50,16 @@ export class StripeService {
     this.userIdCurrent = user.id;
 
     const line_items = getUrlPaymentDto.listProduct.map((item) => {
+      console.log(
+        `http://${this.configService.get<string>('MINIO_ENDPOINT')}:${this.configService.get<string>('MINIO_PORT')}/${item.image}`,
+      );
       return {
         price_data: {
           currency: 'vnd',
           product_data: {
             name: item.productName,
             images: [
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5ChU88yxV3Vp202gD8Trmlznpt6t8ot5zzw&usqp=CAU',
+              `http://${this.configService.get<string>('MINIO_ENDPOINT')}:${this.configService.get<string>('MINIO_PORT')}/${item.image}`,
             ],
           },
           unit_amount: item.price,

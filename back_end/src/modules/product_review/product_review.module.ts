@@ -6,6 +6,7 @@ import { ProductReview } from './entities/product_review.entity';
 import { OrderModule } from '../order/order.module';
 import { OrderDetailModule } from '../order_detail/order_detail.module';
 import { ProductsModule } from '../products/products.module';
+import { DetailProductModule } from '../detail-product/detail-product.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ProductsModule } from '../products/products.module';
     OrderModule,
     OrderDetailModule,
     ProductsModule,
+    DetailProductModule,
   ],
   controllers: [ProductReviewController],
   providers: [ProductReviewService],
