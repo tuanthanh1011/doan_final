@@ -23,7 +23,7 @@ interface DataSocket {
   userId: string;
 }
 
-@WebSocketGateway(82, {
+@WebSocketGateway(80, {
   cors: {
     origin: ['http://192.168.43.219:8080', 'http://localhost:8080'],
     credentials: true,
