@@ -161,7 +161,7 @@ export class SubcategoryService {
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new BadRequestException(
-          'Sản phẩm đã được sử dụng. Không thể xóa',
+          'Danh mục đã được sử dụng. Không thể xóa',
         );
       } else {
         throw new BadRequestException();

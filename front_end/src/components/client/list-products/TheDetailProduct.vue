@@ -204,7 +204,7 @@
                       @change="handleOptionChange(item)"
                       :disabled="item.quantity === 0"
                     />
-                    <label :for="item.id">
+                    <label :for="item.id" style="display: block">
                       {{ item.content }}
                       <span class="tooltip">{{ item.content }}</span>
                     </label>
@@ -305,7 +305,6 @@ export default {
       detailProductReviewId.value = detailProductId;
       isModalVisible.value = true;
       const response = await getReviewByProduct(detailProductReviewId.value);
-      console.log(response);
       reviews.value = response.map((item) => {
         return {
           productName: `${item.product?.product?.productName} - ${item.product?.content}`,
@@ -444,7 +443,7 @@ export default {
         displayToast(
           store.dispatch,
           typeAlertBox.ERROR,
-          err.response.data.message
+          err?.response?.data?.message
         );
       }
     };

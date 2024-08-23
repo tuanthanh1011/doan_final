@@ -20,7 +20,7 @@ const moduleUser = {
         displayToast(
           dispatch,
           typeAlertBox.ERROR,
-          err.response.data.message || "Yêu cầu không hợp lệ"
+          err?.response?.data?.message || "Yêu cầu không hợp lệ"
         );
       }
     },

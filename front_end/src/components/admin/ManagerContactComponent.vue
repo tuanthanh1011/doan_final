@@ -4,7 +4,7 @@
       <div class="form-container">
         <a-form>
           <div style="padding-top: 32px"></div>
-          <a-row justify="space-between">
+          <a-row>
             <a-row :span="8" style="margin-left: 8px">
               <a-form-item label="Tên khách hàng">
                 <a-input
@@ -14,19 +14,18 @@
               </a-form-item>
               <div style="margin: 0 8px"></div>
             </a-row>
-            <a-col :span="4"></a-col>
-            <a-col :span="4" style="display: flex; justify-content: end">
+            <a-col style="display: flex; justify-content: end">
               <a-form-item>
                 <a-button
                   type="primary"
                   :loading="iconLoading"
                   @click="handleSearch"
-                  class="m-6"
+                  style="margin-right: 12px"
                 >
                   <template #icon><SearchOutlined /></template>
                   Tìm kiếm
                 </a-button>
-                <a-button class="m-6" @click="resetData">Làm mới</a-button>
+                <a-button @click="resetData">Làm mới</a-button>
               </a-form-item>
             </a-col>
           </a-row>
@@ -270,7 +269,7 @@ export default {
         open.value = false;
         socket.emit("updateAfterJoined");
       } catch (err) {
-        message.error(err.response.data.message || "Có lỗi xảy ra");
+        message.error(err?.response?.data?.message || "Có lỗi xảy ra");
         console.log(err);
       }
     };

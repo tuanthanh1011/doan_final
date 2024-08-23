@@ -1,8 +1,7 @@
 import { loginAuthApi, logoutAuthApi } from "@/apis/modules/api.auth";
+import { getUserById } from "@/apis/modules/api.user";
 import { typeAlertBox } from "@/constants/enum";
-import { fixEncoding } from "@/utils/fixEncoding";
 import displayToast from "@/utils/handleToast";
-import { verifyToken } from "@/utils/jsonwebtoken";
 
 const moduleAuth = {
   state: () => ({
@@ -17,18 +16,29 @@ const moduleAuth = {
       state.userId = "";
     },
 
-    setUserLoginFromToken(state) {
-      if (localStorage.getItem("accessToken")) {
-        const userDecoded = verifyToken();
+    setUserLogin(state, data) {
+      const { id, username, email, role, avatar } = data;
+      state.userLogin = {
+        id,
+        username,
+        email,
+        role,
+        avatar,
+      };
+    },
+
+    setUserLoginFromToken(state, data) {
+      const { userId, user } = data;
+      if (userId) {
         state.userLogin = {
-          id: userDecoded.id,
-          username: fixEncoding(userDecoded.username),
-          email: userDecoded.email,
-          role: userDecoded.role,
-          avatar: userDecoded.avatar,
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          avatar: user.avatar,
         };
         state.isLogin = true;
-        state.userId = userDecoded.id;
+        state.userId = userId;
       } else {
         state.isLogin = false;
         state.userLogin = {};
@@ -99,8 +109,19 @@ const moduleAuth = {
       }
     },
 
-    loadUserLoginByToken({ commit }) {
-      commit("setUserLoginFromToken");
+    async loadUserLoginByToken({ commit }) {
+      let userId = null;
+      let user = null;
+      if (localStorage.getItem("accessToken")) {
+        const res = await getUserById();
+        console.log(res);
+        userId = res.id || null;
+        user = res;
+      }
+      commit("setUserLoginFromToken", {
+        userId,
+        user,
+      });
     },
   },
 };

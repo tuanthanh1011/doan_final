@@ -33,9 +33,9 @@ export class ProductsService {
       productName,
       description,
       trademark,
-      detailName,
       content,
       price,
+      quantity,
     } = createProductDto;
     const subcategoryFind = await this.subcategoryService.findOne(subcategory);
     const create = this.productsRepository.create({
@@ -43,7 +43,7 @@ export class ProductsService {
       productName,
       description,
       trademark,
-      detailName,
+      detailName: 'Loại/Dung tích',
       subcategory: subcategoryFind,
     });
     const product = await this.productsRepository.save(create);
@@ -52,6 +52,7 @@ export class ProductsService {
         {
           price,
           content,
+          quantity,
         },
       ],
       product: product.id,
@@ -298,7 +299,6 @@ export class ProductsService {
       isActive,
       description,
       trademark,
-      detailName,
       increaseTotalSold,
       quantity,
     } = updateProductDto;
@@ -352,9 +352,7 @@ export class ProductsService {
       product.trademark = trademark;
     }
 
-    if (detailName) {
-      product.detailName = detailName;
-    }
+    product.detailName = 'Loại/Dung tích';
 
     if (increaseTotalSold) {
       product.totalSold = (product.totalSold || 0) + increaseTotalSold;
@@ -368,13 +366,14 @@ export class ProductsService {
     return product;
   }
 
-  remove(productId: string) {
+  async remove(productId: string) {
     try {
       const query = this.productsRepository
         .createQueryBuilder('products')
         .delete()
         .where('products.id = :productId', { productId });
 
+      await this.detailProductService.removeByProductId(productId);
       return query.execute();
     } catch (error) {
       if (error instanceof QueryFailedError) {

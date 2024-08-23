@@ -35,6 +35,7 @@
   <router-view></router-view>
   <alert-box v-if="isAdminRoute === false"></alert-box>
   <the-cart v-if="isAdminRoute === false"></the-cart>
+  <the-footer v-if="isAdminRoute === false"></the-footer>
 </template>
 
 <script>
@@ -44,8 +45,9 @@ import TheCart from "@/components/client/cart/TheCart.vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import TheFooter from "./components/client/TheFooter.vue";
 export default {
-  components: { TheHeader, AlertBox, TheCart },
+  components: { TheHeader, AlertBox, TheCart, TheFooter },
   setup() {
     const store = useStore();
     const router = useRouter();

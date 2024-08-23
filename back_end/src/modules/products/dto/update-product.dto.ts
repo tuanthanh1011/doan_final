@@ -37,10 +37,6 @@ export class UpdateProductDto {
   @IsOptional()
   trademark: string;
 
-  @IsString()
-  @IsOptional()
-  detailName: string;
-
   @IsNumber()
   @IsOptional()
   increaseTotalSold: number;

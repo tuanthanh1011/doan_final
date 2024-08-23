@@ -29,13 +29,13 @@ export class CreateProductDto {
 
   @IsString()
   @IsNotEmpty()
-  detailName: string;
-
-  @IsString()
-  @IsNotEmpty()
   content: string;
 
   @IsNumber()
   @IsNotEmpty()
   price: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  quantity: number;
 }

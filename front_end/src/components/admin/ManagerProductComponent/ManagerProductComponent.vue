@@ -6,7 +6,7 @@
       <div class="form-container">
         <a-form>
           <div style="padding-top: 32px"></div>
-          <a-row justify="space-between">
+          <a-row>
             <a-row :span="8" style="margin-left: 8px">
               <a-form-item label="Tên sản phẩm">
                 <a-input
@@ -16,19 +16,18 @@
               </a-form-item>
               <div style="margin: 0 8px"></div>
             </a-row>
-            <a-col :span="4"></a-col>
-            <a-col :span="4" style="display: flex; justify-content: end">
+            <a-col style="display: flex; justify-content: end">
               <a-form-item>
                 <a-button
                   type="primary"
                   :loading="iconLoading"
                   @click="handleSearch"
-                  class="m-6"
+                  style="margin-right: 12px"
                 >
                   <template #icon><SearchOutlined /></template>
                   Tìm kiếm
                 </a-button>
-                <a-button class="m-6" @click="resetData">Làm mới</a-button>
+                <a-button @click="resetData">Làm mới</a-button>
               </a-form-item>
             </a-col>
           </a-row>
@@ -143,19 +142,6 @@
                 </a-form-item>
 
                 <a-form-item
-                  name="detailName"
-                  label="Tên options"
-                  :rules="[
-                    {
-                      required: true,
-                      message: 'Tên options là bắt buộc!',
-                    },
-                  ]"
-                >
-                  <a-input v-model:value="formState.detailName" />
-                </a-form-item>
-
-                <a-form-item
                   name="content"
                   label="Tên option (Mặc định)"
                   :rules="[
@@ -188,6 +174,41 @@
                   ]"
                 >
                   <a-input v-model:value="formState.price" />
+                </a-form-item>
+
+                <a-form-item
+                  name="quantity"
+                  label="Số lượng trong kho"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Số lượng trong kho là bắt buộc!',
+                    },
+                    {
+                      validator: (rule, value, callback) => {
+                        if (isNaN(value)) {
+                          callback(
+                            new Error('Số lượng trong kho phải là một số!')
+                          );
+                        } else {
+                          callback();
+                        }
+                      },
+                    },
+                    {
+                      validator: (rule, value, callback) => {
+                        if (value < 0) {
+                          callback(
+                            new Error('Số lượng trong kho không được là số âm!')
+                          );
+                        } else {
+                          callback();
+                        }
+                      },
+                    },
+                  ]"
+                >
+                  <a-input v-model:value="formState.quantity" />
                 </a-form-item>
 
                 <a-form-item name="description" label="Mô tả sản phẩm">
@@ -271,23 +292,6 @@
                           >
                             <a-input
                               v-model:value="productSelected.trademark"
-                            />
-                          </a-form-item>
-                        </a-col>
-                        <a-col :span="8">
-                          <a-form-item
-                            name="detailName"
-                            label="Đề mục options"
-                            class="form-item"
-                            :rules="[
-                              {
-                                required: true,
-                                message: 'Đề mục options không được để trống!',
-                              },
-                            ]"
-                          >
-                            <a-input
-                              v-model:value="productSelected.detailName"
                             />
                           </a-form-item>
                         </a-col>
@@ -403,23 +407,6 @@
                         </a-col>
                         <a-col :span="8">
                           <a-form-item
-                            label="Trạng thái"
-                            name="isActive"
-                            class="form-item"
-                            :rules="[
-                              {
-                                required: true,
-                                message: 'Trạng thái chưa được chọn!',
-                              },
-                            ]"
-                          >
-                            <a-switch
-                              v-model:checked="productSelected.isActive"
-                            />
-                          </a-form-item>
-                        </a-col>
-                        <a-col :span="8">
-                          <a-form-item
                             name="subcategoryEdit"
                             label="Danh mục"
                             :rules="[
@@ -444,9 +431,23 @@
                             </a-select>
                           </a-form-item>
                         </a-col>
-                      </a-row>
-
-                      <a-row :gutter="16">
+                        <a-col :span="8">
+                          <a-form-item
+                            label="Trạng thái"
+                            name="isActive"
+                            class="form-item"
+                            :rules="[
+                              {
+                                required: true,
+                                message: 'Trạng thái chưa được chọn!',
+                              },
+                            ]"
+                          >
+                            <a-switch
+                              v-model:checked="productSelected.isActive"
+                            />
+                          </a-form-item>
+                        </a-col>
                         <a-col :span="8">
                           <a-form-item
                             name="imageEdit"
@@ -486,20 +487,19 @@
                             </a-upload>
                           </a-form-item>
                         </a-col>
-
-                        <a-col :span="8">
-                          <a-form-item
-                            name="description"
-                            label="Mô tả"
-                            class="form-item"
-                          >
-                            <a-textarea
-                              style="height: 100px"
-                              v-model:value="productSelected.description"
-                            />
-                          </a-form-item>
-                        </a-col>
                       </a-row>
+
+                      <a-form-item
+                        name="description"
+                        label="Mô tả"
+                        class="form-item"
+                        style="width: 100%"
+                      >
+                        <a-textarea
+                          style="height: 100px; width: 100%"
+                          v-model:value="productSelected.description"
+                        />
+                      </a-form-item>
                     </a-form>
                   </a-modal>
                   <!-- Kết thúc xử lý sửa -->
@@ -533,10 +533,25 @@
                               {{ item.content }}
                             </template>
                             <template #description>
-                              <span class="price-text"
-                                >Giá:
-                                {{ formatNumberWithDots(item.price) }} VND</span
+                              <div
+                                style="
+                                  display: flex;
+                                  justify-content: space-between;
+                                  padding-top: 12px;
+                                "
                               >
+                                <div class="price-text">
+                                  Giá:
+                                  {{ formatNumberWithDots(item.price) }} VND
+                                </div>
+                                <div
+                                  class="price-text"
+                                  style="padding-right: 40px"
+                                >
+                                  Số lượng trong kho:
+                                  {{ formatNumberWithDots(item.quantity) }}
+                                </div>
+                              </div>
                             </template>
                           </a-list-item-meta>
                           <MinusCircleOutlined
@@ -572,14 +587,38 @@
                         </a-form-item>
                         <a-form-item
                           :name="['options', index, 'price']"
-                          :rules="{
-                            required: true,
-                            message: 'Trường này không được để trống!',
-                          }"
+                          :rules="[
+                            {
+                              required: true,
+                              message: 'Trường này không được để trống!',
+                            },
+                            {
+                              validator: validatePrice,
+                              message: 'Giá không hợp lệ!',
+                            },
+                          ]"
                         >
                           <a-input
                             v-model:value="option.price"
                             placeholder="Giá"
+                          />
+                        </a-form-item>
+                        <a-form-item
+                          :name="['options', index, 'quantity']"
+                          :rules="[
+                            {
+                              required: true,
+                              message: 'Trường này không được để trống!',
+                            },
+                            {
+                              validator: validateQuantity,
+                              message: 'Số lượng trong kho không hợp lệ!',
+                            },
+                          ]"
+                        >
+                          <a-input
+                            v-model:value="option.quantity"
+                            placeholder="Số lượng trong kho"
                           />
                         </a-form-item>
                         <MinusCircleOutlined @click="removeOption(option)" />
@@ -671,7 +710,7 @@ const beforeUpload = async (file) => {
     const response = await uploadImageProduct(formData);
     formState.image = response.urlImage;
   } catch (err) {
-    message.error(err.response.data.message || "Có lỗi xảy ra");
+    message.error(err?.response?.data?.message || "Có lỗi xảy ra");
   }
   return false;
 };
@@ -693,6 +732,7 @@ const onOkAdd = async () => {
 
     try {
       data.price = +data.price;
+      data.quantity = +data.quantity;
       await createAProduct(data);
       message.success("Thêm sản phẩm thành công");
       formRef.value.resetFields();
@@ -704,7 +744,7 @@ const onOkAdd = async () => {
         setLoading(false);
       }, 500);
     } catch (err) {
-      message.error(err.response.data.message || "Có lỗi xảy ra");
+      message.error(err?.response?.data?.message || "Có lỗi xảy ra");
     }
   } catch (error) {
     console.log(error);
@@ -803,8 +843,6 @@ async function fetchData() {
       };
     });
     total.value = response.total;
-
-    console.log(response);
   } catch (error) {
     console.error("Failed to fetch data:", error);
   } finally {
@@ -895,7 +933,6 @@ const handleGetProductDetail = async (productId, isHandleListOptions) => {
     productSelected.detailProducts = result.detailProducts;
     productSelected.trademark = result.trademark;
     productSelected.description = result.description;
-    productSelected.detailName = result.detailName;
     if (isHandleListOptions) {
       openMore.value = true;
     } else {
@@ -929,7 +966,6 @@ const handleSubmitChangeProduct = async () => {
       description: productSelected.description,
       detailProductId: productSelected.detailProductId,
       content: productSelected.content,
-      detailName: productSelected.detailName,
       isActive: productSelected.isActive,
     };
     await updateAProduct(productSelected.productId, data);
@@ -954,6 +990,7 @@ async function handleDelete(productId) {
   setLoading(true);
   try {
     await deleteAProduct(productId);
+    message.success("Xóa sản phẩm thành công");
   } catch (err) {
     message.error("Sản phẩm đã được sử dụng. Không thể xóa");
   }
@@ -987,6 +1024,24 @@ const formRefListOptions = ref();
 const dynamicValidateForm = reactive({
   options: [],
 });
+
+const validatePrice = (rule, value) => {
+  if (!value) return Promise.reject("Giá phải là một số và không âm");
+  if (value && isNaN(value)) return Promise.reject("Giá phải là một số");
+  if (value && value < 0) return Promise.reject("Giá không được là số âm");
+  return Promise.resolve();
+};
+
+const validateQuantity = (rule, value) => {
+  if (!value)
+    return Promise.reject("Số lượng trong kho phải là một số và không âm");
+  if (value && isNaN(value))
+    return Promise.reject("Số lượng trong kho phải là một số");
+  if (value && value < 0)
+    return Promise.reject("Số lượng trong kho không được là số âm");
+  return Promise.resolve();
+};
+
 const removeOption = (item) => {
   const index = dynamicValidateForm.options.indexOf(item);
   if (index !== -1) {
@@ -997,6 +1052,7 @@ const addUser = () => {
   dynamicValidateForm.options.push({
     content: "",
     price: "",
+    quantity: "",
     id: Date.now(),
   });
 };
@@ -1004,7 +1060,9 @@ const addUser = () => {
 const handleSubmitChangeListOptions = async (productId) => {
   try {
     const result = await formRefListOptions.value.validateFields();
-    console.log(result);
+    if (result.errorFields && result.errorFields.length > 0) {
+      return;
+    }
     setLoading(true);
     await createDetailProduct({
       options: dynamicValidateForm.options,
@@ -1014,8 +1072,10 @@ const handleSubmitChangeListOptions = async (productId) => {
     message.success("Cập nhật danh sách options thành công");
     dynamicValidateForm.options = [];
   } catch (error) {
-    console.log(error);
-    message.error(error?.response?.data?.message || "Có lỗi xảy ra");
+    console.log("ERROR", error);
+    if (error?.response?.data?.message) {
+      message.error(error?.response?.data?.message);
+    }
   } finally {
     setLoading(false);
   }

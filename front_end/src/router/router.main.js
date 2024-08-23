@@ -288,6 +288,7 @@ router.beforeEach((to, from, next) => {
   } else {
     store.dispatch("auth/loadUserLoginByToken", true);
     store.commit("setIsAdminRoute", requiresAuthAdmin);
+    localStorage.setItem("isAdminRoute", requiresAuthAdmin);
     next();
   }
 });

@@ -90,7 +90,7 @@ export default {
         displayToast(
           store.dispatch,
           typeAlertBox.ERROR,
-          err.response.data.message || "Có lỗi xảy ra"
+          err?.response?.data?.message || "Có lỗi xảy ra"
         );
       }
     };

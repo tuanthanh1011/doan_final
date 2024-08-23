@@ -49,7 +49,7 @@ export class DetailProductService {
 
     if (isValid) {
       for (let option of options) {
-        const { price, content } = option;
+        const { price, content, quantity } = option;
         if (listContent.includes(content)) {
           isValid = false;
           break;
@@ -58,6 +58,7 @@ export class DetailProductService {
           price,
           content,
           product,
+          quantity,
         });
         listContent.push(content);
         listPromise.push(this.detailProductRepository.save(create));
@@ -131,5 +132,19 @@ export class DetailProductService {
     return this.detailProductRepository.delete({
       id: id,
     });
+  }
+  async removeByProductId(productId: string) {
+    const detailProducts = await this.detailProductRepository.findBy({
+      product: productId,
+    });
+
+    if (!detailProducts || detailProducts.length === 0) {
+      throw new NotFoundException('Không tìm thấy option tương ứng');
+    }
+
+    await this.detailProductRepository.delete(
+      detailProducts.map((dp) => dp.id),
+    );
+    return { deletedCount: detailProducts.length };
   }
 }

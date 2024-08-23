@@ -143,8 +143,9 @@
       ></list-product>
 
       <template style="display: block">
-        <div>
-          <a-empty v-if="true" description="Không tìm thấy kết quả phù hợp!" />
+        <div v-if="listProduct && listProduct.length == 0">
+          Length: {{ listProduct }}
+          <a-empty description="Không tìm thấy kết quả phù hợp!" />
         </div>
       </template>
 
@@ -182,7 +183,7 @@ export default {
     const store = useStore();
     const route = useRoute();
 
-    const listProduct = ref([]);
+    const listProduct = ref(null);
     const page = ref(1);
     const total = ref(0);
     const customParams = ref({});

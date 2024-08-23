@@ -103,8 +103,9 @@ export default {
 
     const urlImage = ref("");
     const username = ref("");
-    const userLogin = ref({});
     const fileList = ref([]);
+
+    const userLogin = computed(() => store.state.auth.userLogin);
 
     const listUserAddressByUser = computed(
       () => store.state.userAddress.listUserAddressByUser
@@ -112,7 +113,7 @@ export default {
 
     const fetchData = async () => {
       const response = await getUserById();
-      userLogin.value = response;
+      store.commit("auth/setUserLogin", response);
     };
 
     onMounted(() => {
@@ -148,22 +149,17 @@ export default {
         displayToast(
           store.dispatch,
           typeAlertBox.ERROR,
-          err.response.data.message || "Có lỗi xảy ra"
+          err?.response?.data?.message || "Có lỗi xảy ra"
         );
       }
     };
 
     const beforeUpload = async (file) => {
-      console.log("Before Upload File:", file);
       const formData = new FormData();
-      console.log(formData);
       formData.append("file", file);
-      console.log(formData);
 
       try {
-        console.log("FORM DATA: ", formData);
         const response = await uploadAvatarApi(formData);
-        console.log("Upload Response:", response);
 
         if (response.urlImage) {
           urlImage.value = response.urlImage;
@@ -180,7 +176,7 @@ export default {
         displayToast(
           store.dispatch,
           typeAlertBox.ERROR,
-          err.response.data.message || "Có lỗi xảy ra trong quá trình upload"
+          err?.response?.data?.message || "Có lỗi xảy ra trong quá trình upload"
         );
       }
 

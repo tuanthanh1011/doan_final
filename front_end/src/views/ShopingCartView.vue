@@ -249,7 +249,6 @@ export default {
         return false;
       }
 
-      console.log(addressClone.value);
       return true;
     };
 
@@ -257,7 +256,6 @@ export default {
       if (checkEmtpyField()) {
         enterIconLoadingPayCard();
         const processedListProduct = listProductOfCart.value.map((item) => {
-          console.log(item);
           const productName = item?.detailProduct?.product?.productName;
           const detailProductName = item?.detailProduct?.content;
           return {

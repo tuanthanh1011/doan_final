@@ -9,6 +9,5 @@ export const isReviewedAPI = async (data) => {
 };
 
 export const getReviewByProduct = async (productId) => {
-  console.log(productId);
   return await axiosAPI.get(`/product-review/${productId}`);
 };
